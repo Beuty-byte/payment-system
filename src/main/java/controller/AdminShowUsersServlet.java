@@ -39,11 +39,9 @@ public class AdminShowUsersServlet extends HttpServlet {
             }
             int amountUsers = new UserDAOImpl().getAmountUsersInSystem();
 
-
             request.setAttribute("pagination",
                     new Pagination(currentPage, amountUsers , UserDAOImpl.getShowUsersOnPage()
                             , request.getRequestURI(), sortBy).get());
-
 
             request.getRequestDispatcher("/WEB-INF/view/adminShowUsers.jsp").forward(request, response);
         }else {

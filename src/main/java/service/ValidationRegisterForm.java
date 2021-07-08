@@ -20,22 +20,20 @@ public class ValidationRegisterForm implements VerifiableData {
     @Override
     public List<String> validate(Map<String, String[]> dataWithForm){
          List<String> registerErrors = new ArrayList<>();
-         List<String> passwords = new ArrayList<>();
         ValidationUniquenessEmailDAO validationUniquenessEmailDAO = new ValidationUniquenessEmailDAO();
 
-        for (Map.Entry<String,String[]> el : dataWithForm.entrySet()){
-            if(el.getKey().equals("name")){
-                checkNameValueFromForm(el.getValue()[0], registerErrors);
-            }else if(el.getKey().equals("surname")){
-                checkSurnameValueFromForm(el.getValue()[0], registerErrors);
-            }else if(el.getKey().equals("password1") || el.getKey().equals("password2")){
-                passwords.add(el.getValue()[0]);
-            }else if(el.getKey().equals("email")){
-                checkEmailFromFormOnValid(el.getValue()[0], registerErrors);
-                validationUniquenessEmailDAO.checkEmailForUniqueness(el.getValue()[0] ,registerErrors);
-            }
-        }
-        checkPasswordFromForm(passwords.get(0),passwords.get(1), registerErrors);
+        String name = dataWithForm.get("name")[0];
+        String surname = dataWithForm.get("surname")[0];
+        String password1 = dataWithForm.get("password1")[0];
+        String password2 = dataWithForm.get("password2")[0];
+        String email = dataWithForm.get("email")[0];
+
+        checkNameValueFromForm(name, registerErrors);
+        checkSurnameValueFromForm(surname, registerErrors);
+        checkPasswordFromForm(password1, password2, registerErrors);
+        checkEmailFromFormOnValid(email, registerErrors);
+        validationUniquenessEmailDAO.checkEmailForUniqueness(email, registerErrors);
+
         return registerErrors;
     }
 

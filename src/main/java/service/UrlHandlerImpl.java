@@ -11,12 +11,6 @@ public class UrlHandlerImpl implements UrlHandler {
     }
 
     public Long getIdFromUrl(String url){
-        Long paymentId = null;
-        try {
-            paymentId = Long.valueOf(url.split("/")[3]);
-        }catch (NumberFormatException e){
-            System.out.println("wrong format");
-        }
-        return paymentId;
+       return Long.valueOf(url.split("/")[3]);
     }
 }

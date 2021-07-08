@@ -4,14 +4,14 @@ import dao.UserDAOImpl;
 
 import java.util.Map;
 
-public class CheckInUserInSystemImpl implements Registered{
+public class RegisterUserInSystem implements Registered{
 
-    private static final Registered checkIn = new CheckInUserInSystemImpl();
+    private static final RegisterUserInSystem registerUserInSystem = new RegisterUserInSystem();
 
-    private CheckInUserInSystemImpl(){}
+    private RegisterUserInSystem(){}
 
     public static Registered getInstance(){
-        return checkIn;
+        return registerUserInSystem;
     }
 
     @Override

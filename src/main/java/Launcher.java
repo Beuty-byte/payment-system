@@ -11,7 +11,7 @@ import java.io.File;
 public class Launcher {
     public static void main(String[] args) throws ServletException, LifecycleException{
 
-        int port = 8080;
+        int port = 8081;
 
         Tomcat tomcat = new Tomcat();
         tomcat.setPort(port);

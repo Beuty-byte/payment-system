@@ -1,5 +1,6 @@
 package controller;
 
+import domain.CreditCard;
 import domain.Role;
 import domain.SessionObjectForUser;
 import service.*;
@@ -26,7 +27,7 @@ public class CreditCardDetailsServlet extends HttpServlet {
         SessionObjectForUser sessionObject = (SessionObjectForUser)request.getSession().getAttribute("isActive");
         if(sessionObject != null && sessionObject.getUserRole() == Role.CUSTOMER){
             long creditCardId = urlHandler.getIdFromUrl(request.getRequestURI());
-            domain.CreditCard creditCardById = creditCardInfo.getCreditCardById(creditCardId, sessionObject.getUserId());
+            CreditCard creditCardById = creditCardInfo.getCreditCardById(creditCardId, sessionObject.getUserId());
             request.setAttribute("creditCardInfo", creditCardById);
             request.getRequestDispatcher("/WEB-INF/view/creditCardDetails.jsp").forward(request, response);
         }else {

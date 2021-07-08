@@ -1,5 +1,7 @@
 package dao;
 
+import org.apache.log4j.Logger;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -9,12 +11,13 @@ import java.util.List;
 public class ValidationUniquenessEmailDAO {
 
     private Connection connection;
+    private static final Logger logger = Logger.getLogger(ValidationUniquenessEmailDAO.class);
 
     {
         try {
             connection = ConnectionPool.getConnection();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+        } catch (SQLException throwable) {
+            logger.error("connection error ",throwable);
         }
     }
 
@@ -30,7 +33,7 @@ public class ValidationUniquenessEmailDAO {
                 registerErrors.add("such email is in the system");
             }
         } catch (SQLException throwable) {
-            throwable.printStackTrace();
+            logger.error("sql exception ",throwable);
         }
     }
 }

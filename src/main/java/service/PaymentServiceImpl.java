@@ -21,26 +21,27 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public List<Payment> getAllPaymentByUserId(int userId) {
-        return new PaymentDAOImpl().getAllCreditsCardWithPayment(userId);
+    public List<Payment> getAllPaymentsByUserId(int userId) {
+        return new PaymentDAOImpl().getAllPaymentsForUser(userId);
     }
 
     @Override
-    public Payment getPaymentById(int paymentId, int userId) {
-        return new PaymentDAOImpl().getCreditsCardWithPayment(paymentId, userId);
+    public Payment getPaymentById(int paymentId) {
+        return new PaymentDAOImpl().getPaymentById(paymentId);
     }
 
 
     @Override
-    public List<String> doPayment(Payment payment) {
+    public List<String> doPayment(long creditCardId, int paymentId) {
         List<String> paymentErrors = new ArrayList<>();
-        CreditCard creditCard = new CreditCardDAOImpl().getCreditCardById(payment.getCreditCardId());
+        CreditCard creditCard = new CreditCardDAOImpl()
+                .getCreditCardById(creditCardId)
+                .orElseThrow(NumberFormatException::new);
+        Payment payment = new PaymentDAOImpl().getPaymentById(paymentId);
         BigDecimal balance = creditCard.getBankAccount().getBalance();
         BigDecimal paymentSum = payment.getSum();
         BigDecimal difference = balance.subtract(paymentSum);
 
-        System.out.println(paymentSum.negate());
-        // кидать эксепшн
         if(difference.compareTo(BigDecimal.ZERO) < 0){
             paymentErrors.add("not enough money on the credit card");
         }else if(creditCard.getBankAccount().getBlocked()){

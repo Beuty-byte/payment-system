@@ -1,9 +1,9 @@
 package service;
 
 import dao.CreditCardDAOImpl;
-import dao.VerificationOfLoginDetailsDAO;
 import domain.CreditCard;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public class CreditCardServiceImpl implements CreditCardService {
@@ -27,14 +27,16 @@ public class CreditCardServiceImpl implements CreditCardService {
     public CreditCard getCreditCardById(long creditCardId, int userId){
         boolean access = userAccessToCreditCard(creditCardId, userId);
         if(access){
-            return new CreditCardDAOImpl().getCreditCardById(creditCardId);
+            return new CreditCardDAOImpl()
+                    .getCreditCardById(creditCardId)
+                    .orElseThrow(NumberFormatException::new);
         }
         return null;
     }
 
-    @Override
-    public boolean userAccessToCreditCard(long creditCardId, int userId){
-        return new VerificationOfLoginDetailsDAO().checkAccessToCreditCardInformation(creditCardId, userId);
+
+    private boolean userAccessToCreditCard(long creditCardId, int userId){
+        return new CreditCardDAOImpl().checkAccessToCreditCardInformation(creditCardId, userId);
     }
 
     @Override
@@ -45,7 +47,10 @@ public class CreditCardServiceImpl implements CreditCardService {
 
     @Override
     public String getTotalBalance(int userId) {
-        return new CreditCardDAOImpl().getTotalBalance(userId).toString();
+        BigDecimal totalBalance = new CreditCardDAOImpl()
+                .getTotalBalance(userId)
+                .orElseThrow(IllegalArgumentException::new);
+        return totalBalance.toString();
     }
 
     private String transformId(char[] idForPrint){

@@ -15,5 +15,5 @@ public interface CreditCardService {
 
     String getTotalBalance(int userId);
 
-    boolean userAccessToCreditCard(long creditCardId, int userId);
+//    boolean userAccessToCreditCard(long creditCardId, int userId);
 }

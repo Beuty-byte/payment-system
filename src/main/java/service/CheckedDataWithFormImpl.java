@@ -33,9 +33,11 @@ public class CheckedDataWithFormImpl implements CheckDataWithFormService {
     }
 
     private void cardIsBlocked(List<String> validationsErrors, long creditCardId){
-        CreditCard creditCardById = new CreditCardDAOImpl().getCreditCardById(creditCardId);
+        CreditCard creditCardById = new CreditCardDAOImpl()
+                .getCreditCardById(creditCardId)
+                .orElseThrow(NumberFormatException::new);
         if(creditCardById.getBankAccount().getBlocked()){
-            validationsErrors.add("you cannot top up your balance, your card is blocked");
+            validationsErrors.add("you can't top up your balance, your card is blocked");
         }
     }
 

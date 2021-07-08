@@ -2,15 +2,18 @@ package dao;
 
 import domain.Role;
 import domain.SessionObjectForUser;
+import org.apache.log4j.Logger;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Optional;
 
 public class VerificationOfLoginDetailsDAO {
 
     private Connection connection;
+    private static final Logger logger = Logger.getLogger(VerificationOfLoginDetailsDAO.class);
 
     {
         try {
@@ -20,7 +23,8 @@ public class VerificationOfLoginDetailsDAO {
         }
     }
 
-    public SessionObjectForUser verificationEmailAndPassword(String email, String password){
+    public Optional<SessionObjectForUser> verificationEmailAndPassword(String email, String password){
+        SessionObjectForUser sessionObjectForUser = null;
         try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT id, role FROM users " +
                 "WHERE email = ? AND password = ?")){
             preparedStatement.setString(1,email);
@@ -29,33 +33,15 @@ public class VerificationOfLoginDetailsDAO {
             while (resultSet.next()){
                 if(resultSet.getObject("id",Integer.class) != null){
 
-                    return new SessionObjectForUser(resultSet.getObject("id", Integer.class)
+                    sessionObjectForUser = new SessionObjectForUser(resultSet.getObject("id", Integer.class)
                             , Role.valueOf(resultSet.getObject("role", String.class).toUpperCase()));
 
                 }
             }
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+        } catch (SQLException throwable) {
+            logger.error("sql exception ", throwable);
         }
-        return null;
+        return Optional.ofNullable(sessionObjectForUser);
     }
 
-    public boolean checkAccessToCreditCardInformation(long creditCardId,int userId){
-        try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT COUNT(*) FROM credit_card " +
-                "WHERE users_id = ? AND id = ?")){
-            preparedStatement.setObject(1,userId);
-            preparedStatement.setObject(2,creditCardId);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            resultSet.next();
-            int amount = resultSet.getInt(1);
-            if(amount > 0){
-                return true;
-            }
-            return false;
-
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-        return false;
-    }
 }

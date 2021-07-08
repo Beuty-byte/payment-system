@@ -1,5 +1,6 @@
 package controller;
 
+import domain.CreditCard;
 import domain.Role;
 import domain.SessionObjectForUser;
 import service.CreditCardService;
@@ -22,7 +23,7 @@ public class CreditCardsServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         SessionObjectForUser sessionObject = (SessionObjectForUser)request.getSession().getAttribute("isActive");
         if(sessionObject != null && sessionObject.getUserRole() == Role.CUSTOMER){
-            List<domain.CreditCard> creditCardList =  creditCardInfo.getAllCreditsCardForUser(sessionObject.getUserId());
+            List<CreditCard> creditCardList =  creditCardInfo.getAllCreditsCardForUser(sessionObject.getUserId());
             String totalBalance = creditCardInfo.getTotalBalance(sessionObject.getUserId());
             request.setAttribute("totalBalance", totalBalance);
             request.setAttribute("creditCards", creditCardList);

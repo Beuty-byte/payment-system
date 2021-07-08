@@ -18,17 +18,15 @@ import java.util.List;
 @WebServlet("/account/payments")
 public class PaymentServlet extends HttpServlet {
 
-    private final PaymentService paymentInfo = PaymentServiceImpl.getInstance();
+    private final PaymentService paymentService = PaymentServiceImpl.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         SessionObjectForUser sessionObject = (SessionObjectForUser)request.getSession().getAttribute("isActive");
 
         if(sessionObject != null && sessionObject.getUserRole() == Role.CUSTOMER){
-
-            List<Payment> payments = paymentInfo.getAllPaymentByUserId(sessionObject.getUserId());
+            List<Payment> payments = paymentService.getAllPaymentsByUserId(sessionObject.getUserId());
             request.setAttribute("payments", payments);
-
             request.getRequestDispatcher("/WEB-INF/view/payment.jsp").forward(request, response);
         }else {
             response.sendRedirect("/sign-in");

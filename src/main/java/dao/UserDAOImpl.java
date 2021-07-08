@@ -2,6 +2,7 @@ package dao;
 
 import domain.CreditCard;
 import domain.User;
+import org.apache.log4j.Logger;
 
 import java.sql.*;
 
@@ -12,11 +13,12 @@ import java.util.Map;
 public class UserDAOImpl implements UserDAO{
     private Connection connection;
     private static final int SHOW_USERS_ON_PAGE = 5;
+    private static final Logger logger = Logger.getLogger(UserDAOImpl.class);
     {
         try {
             connection = ConnectionPool.getConnection();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+        } catch (SQLException throwable) {
+            throwable.printStackTrace();
         }
     }
 
@@ -29,8 +31,8 @@ public class UserDAOImpl implements UserDAO{
             ResultSet resultSet = statement.executeQuery("SELECT COUNT(*) FROM users");
             resultSet.next();
             return resultSet.getInt(1);
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+        } catch (SQLException throwable) {
+            throwable.printStackTrace();
         }
         throw new IllegalArgumentException();
     }
@@ -39,7 +41,7 @@ public class UserDAOImpl implements UserDAO{
         List<User> users = new ArrayList<>();
         try (Statement statement = connection.createStatement()){
 
-            String sqlQuery = "SELECT * FROM users LIMIT "+SHOW_USERS_ON_PAGE;
+            String sqlQuery = "SELECT * FROM users LIMIT " + SHOW_USERS_ON_PAGE;
 
             if(page != null && sortByValue != null){
                 sqlQuery = "SELECT * FROM users ORDER BY " + sortByValue
@@ -87,7 +89,7 @@ public class UserDAOImpl implements UserDAO{
         } catch (SQLException throwable) {
             throwable.printStackTrace();
         }
-        return null;
+        throw new RuntimeException();
     }
 
     public boolean registerUserInSystem(Map<String, String[]> customerData){
@@ -99,7 +101,7 @@ public class UserDAOImpl implements UserDAO{
             statement.setString(4, customerData.get("email")[0]);
             return statement.execute();
         } catch (SQLException throwable) {
-            throwable.printStackTrace();
+            logger.error("sql error ", throwable);
         }
         return false;
     }

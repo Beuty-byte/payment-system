@@ -3,32 +3,23 @@ package service;
 
 import dao.VerificationOfLoginDetailsDAO;
 import domain.SessionObjectForUser;
+import org.apache.log4j.Logger;
 
 import java.util.Map;
+import java.util.Optional;
 
 public class VerificationOfLoginDetails implements CheckedLoginDetails{
 
     private static final VerificationOfLoginDetails verificationOfLoginDetails = new VerificationOfLoginDetails();
-
     public static VerificationOfLoginDetails getInstance(){
         return verificationOfLoginDetails;
     }
 
     private VerificationOfLoginDetails(){}
 
-
     @Override
-    public SessionObjectForUser dataChecking(Map<String,String[]> dataWithForm){
-        String password = null;
-        String email = null;
-        for(Map.Entry<String, String[]> el : dataWithForm.entrySet()){
-            if(el.getKey().equals("email")){
-                email = el.getValue()[0];
-            }
-            if(el.getKey().equals("password")){
-                password = el.getValue()[0];
-            }
-        }
-        return new VerificationOfLoginDetailsDAO().verificationEmailAndPassword(email, password);
+    public SessionObjectForUser loginDataValidation(String email, String password){
+        return new VerificationOfLoginDetailsDAO().verificationEmailAndPassword(email, password)
+        .orElseThrow(IllegalArgumentException::new);
     }
 }

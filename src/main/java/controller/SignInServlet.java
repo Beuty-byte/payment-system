@@ -21,28 +21,30 @@ public class SignInServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
         request.getRequestDispatcher("/WEB-INF/view/sign-in.jsp").forward(request, response);
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        SessionObjectForUser sessionObjectForUser = checkedLoginDetails.dataChecking(request.getParameterMap());
+        String email = request.getParameter("email");
+        String password = request.getParameter("password");
 
-        if(sessionObjectForUser == null){
-            request.setAttribute("error", "wrong password or email");
-            doGet(request,response);
-        }else {
+        try {
+            SessionObjectForUser sessionObjectForUser = checkedLoginDetails.loginDataValidation(email, password);
             HttpSession session = request.getSession();
             if(session.getAttribute("isActive") == null){
                 session.setAttribute("isActive", sessionObjectForUser);
             }
             if(sessionObjectForUser.getUserRole() == Role.CUSTOMER) {
                 response.sendRedirect("/account");
-            }else {
+            }else if(sessionObjectForUser.getUserRole() == Role.ADMIN){
                 response.sendRedirect("/admin");
             }
+        }catch (IllegalArgumentException e){
+            request.setAttribute("error", "wrong password or email");
+            response.setStatus(401);
+            doGet(request,response);
         }
     }
 }

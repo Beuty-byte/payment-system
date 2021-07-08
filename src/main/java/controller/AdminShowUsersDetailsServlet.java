@@ -2,6 +2,7 @@ package controller;
 
 import domain.Role;
 import domain.SessionObjectForUser;
+import domain.User;
 import service.*;
 
 import javax.servlet.ServletException;
@@ -24,7 +25,7 @@ public class AdminShowUsersDetailsServlet extends HttpServlet {
         if(sessionObject != null && sessionObject.getUserRole() == Role.ADMIN){
 
             int userId = Math.toIntExact(urlHandler.getIdFromUrl(request.getRequestURI()));
-            domain.User userById = userInfo.getUserById(userId);
+            User userById = userInfo.getUserById(userId);
             request.setAttribute("user",userById);
 
 

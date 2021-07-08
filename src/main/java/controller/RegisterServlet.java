@@ -1,6 +1,6 @@
 package controller;
 
-import service.CheckInUserInSystemImpl;
+import service.RegisterUserInSystem;
 import service.Registered;
 import service.ValidationRegisterForm;
 import service.VerifiableData;
@@ -17,7 +17,7 @@ import java.util.List;
 public class RegisterServlet extends HttpServlet {
 
     private final VerifiableData validationRegisterForm = ValidationRegisterForm.getInstance();
-    private final Registered registerUserInSystem = CheckInUserInSystemImpl.getInstance();
+    private final Registered registerUserInSystem = RegisterUserInSystem.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -31,6 +31,7 @@ public class RegisterServlet extends HttpServlet {
 
         if(registerErrors.size() > 0){
             request.setAttribute("errors",registerErrors);
+            response.setStatus(400);
             doGet(request,response);
         }else if(!registerUserInSystem.registerInSystem(request.getParameterMap())){
             response.sendRedirect("/");
