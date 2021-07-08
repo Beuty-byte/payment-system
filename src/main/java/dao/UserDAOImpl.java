@@ -35,6 +35,7 @@ public class UserDAOImpl implements UserDAO{
         } catch (SQLException throwable) {
             throwable.printStackTrace();
         }
+        DataSource.returnConnection(connection);
         throw new IllegalArgumentException();
     }
 
@@ -70,6 +71,7 @@ public class UserDAOImpl implements UserDAO{
         } catch (SQLException throwable) {
             throwable.printStackTrace();
         }
+        DataSource.returnConnection(connection);
         return users;
     }
 
@@ -90,6 +92,7 @@ public class UserDAOImpl implements UserDAO{
         } catch (SQLException throwable) {
             throwable.printStackTrace();
         }
+        DataSource.returnConnection(connection);
         throw new RuntimeException();
     }
 
@@ -104,6 +107,7 @@ public class UserDAOImpl implements UserDAO{
         } catch (SQLException throwable) {
             logger.error("sql error ", throwable);
         }
+        DataSource.returnConnection(connection);
         return false;
     }
 }

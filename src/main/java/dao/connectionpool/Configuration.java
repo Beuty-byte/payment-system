@@ -11,6 +11,7 @@ public class Configuration {
     public static Configuration getInstance(){
         return configuration;
     }
+
     private Configuration() {
         init();
     }

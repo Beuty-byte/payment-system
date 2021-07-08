@@ -43,10 +43,10 @@ public class CreditCardDAOImpl implements CreditCardDAO{
                 creditCardList.add(new CreditCard(creditCardId,getBankAccount(bankAccountId)
                         , creditCardName,creditCardInfo.getIdForPrettyPrint(creditCardId)));
             }
-
         } catch (SQLException throwable) {
             logger.error("wrong format id", throwable);
         }
+        DataSource.returnConnection(connection);
         return creditCardList;
     }
 
@@ -62,6 +62,7 @@ public class CreditCardDAOImpl implements CreditCardDAO{
         } catch (SQLException throwable) {
             logger.error("sql error", throwable);
         }
+        DataSource.returnConnection(connection);
         return Optional.ofNullable(totalBalance);
     }
 
@@ -82,6 +83,7 @@ public class CreditCardDAOImpl implements CreditCardDAO{
         } catch (SQLException throwable) {
             logger.error("sql error", throwable);
         }
+        DataSource.returnConnection(connection);
         return Optional.ofNullable(creditCard);
     }
 
@@ -98,6 +100,7 @@ public class CreditCardDAOImpl implements CreditCardDAO{
         } catch (SQLException throwable) {
             logger.error("sql error", throwable);
         }
+        DataSource.returnConnection(connection);
         throw new RuntimeException();
     }
 
@@ -116,6 +119,7 @@ public class CreditCardDAOImpl implements CreditCardDAO{
         } catch (SQLException throwable) {
             logger.error("sql error", throwable);
         }
+        DataSource.returnConnection(connection);
     }
 
 
@@ -130,6 +134,7 @@ public class CreditCardDAOImpl implements CreditCardDAO{
         } catch (SQLException throwable) {
             logger.error("sql error", throwable);
         }
+        DataSource.returnConnection(connection);
     }
 
     public void unsetBlockOnBankAccount(int bankAccountId){
@@ -140,6 +145,7 @@ public class CreditCardDAOImpl implements CreditCardDAO{
         } catch (SQLException throwable) {
             logger.error("sql error", throwable);
         }
+        DataSource.returnConnection(connection);
     }
 
     public boolean checkAccessToCreditCardInformation(long creditCardId,int userId){
@@ -158,6 +164,7 @@ public class CreditCardDAOImpl implements CreditCardDAO{
         } catch (SQLException throwable) {
             logger.error("sql error", throwable);
         }
+        DataSource.returnConnection(connection);
         return false;
     }
 }

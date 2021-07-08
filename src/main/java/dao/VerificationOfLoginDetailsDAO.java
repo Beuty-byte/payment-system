@@ -42,6 +42,7 @@ public class VerificationOfLoginDetailsDAO {
         } catch (SQLException throwable) {
             logger.error("sql exception ", throwable);
         }
+        DataSource.returnConnection(connection);
         return Optional.ofNullable(sessionObjectForUser);
     }
 

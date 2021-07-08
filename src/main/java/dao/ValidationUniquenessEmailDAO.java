@@ -36,5 +36,6 @@ public class ValidationUniquenessEmailDAO {
         } catch (SQLException throwable) {
             logger.error("sql exception ",throwable);
         }
+        DataSource.returnConnection(connection);
     }
 }

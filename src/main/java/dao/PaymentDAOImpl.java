@@ -45,6 +45,7 @@ public class PaymentDAOImpl implements PaymentDAO{
         } catch (SQLException throwable) {
             logger.error("sql error", throwable);
         }
+        DataSource.returnConnection(connection);
         return paymentList;
     }
 
@@ -69,6 +70,7 @@ public class PaymentDAOImpl implements PaymentDAO{
             } catch (SQLException e) {
             logger.error("sql error", e);
         }
+        DataSource.returnConnection(connection);
         return Optional.ofNullable(payment);
     }
 
@@ -80,5 +82,6 @@ public class PaymentDAOImpl implements PaymentDAO{
         } catch (SQLException e) {
             logger.error("sql error", e);
         }
+        DataSource.returnConnection(connection);
     }
 }

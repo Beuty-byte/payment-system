@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class JdbcConnectionPool {
+class JdbcConnectionPool {
     List<Connection> availableConnection = new ArrayList<>();
 
     public JdbcConnectionPool(){
@@ -17,12 +17,8 @@ public class JdbcConnectionPool {
         Configuration config = Configuration.getInstance();
         try {
             Class.forName(config.DB_DRIVER);
-            Connection connection = (Connection) DriverManager
-                    .getConnection(config.DB_URL, config.DB_USER_NAME, config.DB_PASSWORD);
-            return connection;
-        }catch (ClassNotFoundException e){
-            e.printStackTrace();
-        }catch (SQLException e){
+            return DriverManager.getConnection(config.DB_URL, config.DB_USER_NAME, config.DB_PASSWORD);
+        }catch (ClassNotFoundException | SQLException e){
             e.printStackTrace();
         }
         return null;
@@ -36,10 +32,7 @@ public class JdbcConnectionPool {
 
     private synchronized boolean checkIfConnectionPoolIsFull(){
         final int MAX_POOL_SIZE = Configuration.getInstance().DB_MAX_CONNECTION;
-        if(availableConnection.size() < MAX_POOL_SIZE){
-            return false;
-        }
-        return true;
+        return availableConnection.size() >= MAX_POOL_SIZE;
     }
 
     public synchronized Connection getConnectionFromPool(){

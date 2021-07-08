@@ -1,16 +1,13 @@
 package dao.connectionpool;
 
-import dao.ConnectionPool;
-
 import java.sql.Connection;
 import java.sql.SQLException;
 
 public class DataSource {
-    static JdbcConnectionPool poll = new JdbcConnectionPool();
+    private static JdbcConnectionPool poll = new JdbcConnectionPool();
 
     public static Connection getConnection() throws ClassNotFoundException, SQLException{
-        Connection connection = poll.getConnectionFromPool();
-        return connection;
+        return poll.getConnectionFromPool();
     }
 
     public static void returnConnection(Connection connection){
