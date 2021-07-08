@@ -7,6 +7,7 @@ import domain.Payment;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.EmptyStackException;
 import java.util.List;
 
 public class PaymentServiceImpl implements PaymentService {
@@ -27,7 +28,9 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public Payment getPaymentById(int paymentId) {
-        return new PaymentDAOImpl().getPaymentById(paymentId);
+        return new PaymentDAOImpl()
+                .getPaymentById(paymentId)
+                .orElseThrow(EmptyStackException::new);
     }
 
 
@@ -37,7 +40,8 @@ public class PaymentServiceImpl implements PaymentService {
         CreditCard creditCard = new CreditCardDAOImpl()
                 .getCreditCardById(creditCardId)
                 .orElseThrow(NumberFormatException::new);
-        Payment payment = new PaymentDAOImpl().getPaymentById(paymentId);
+        Payment payment = new PaymentDAOImpl()
+                .getPaymentById(paymentId).orElseThrow(EmptyStackException::new);
         BigDecimal balance = creditCard.getBankAccount().getBalance();
         BigDecimal paymentSum = payment.getSum();
         BigDecimal difference = balance.subtract(paymentSum);

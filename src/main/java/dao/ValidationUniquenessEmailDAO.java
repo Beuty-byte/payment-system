@@ -1,5 +1,6 @@
 package dao;
 
+import dao.connectionpool.DataSource;
 import org.apache.log4j.Logger;
 
 import java.sql.Connection;
@@ -15,8 +16,8 @@ public class ValidationUniquenessEmailDAO {
 
     {
         try {
-            connection = ConnectionPool.getConnection();
-        } catch (SQLException throwable) {
+            connection = DataSource.getConnection();
+        } catch (SQLException | ClassNotFoundException throwable) {
             logger.error("connection error ",throwable);
         }
     }

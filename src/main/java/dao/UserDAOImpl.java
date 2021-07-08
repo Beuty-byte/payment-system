@@ -1,5 +1,6 @@
 package dao;
 
+import dao.connectionpool.DataSource;
 import domain.CreditCard;
 import domain.User;
 import org.apache.log4j.Logger;
@@ -16,8 +17,8 @@ public class UserDAOImpl implements UserDAO{
     private static final Logger logger = Logger.getLogger(UserDAOImpl.class);
     {
         try {
-            connection = ConnectionPool.getConnection();
-        } catch (SQLException throwable) {
+            connection = DataSource.getConnection();
+        } catch (SQLException | ClassNotFoundException throwable) {
             throwable.printStackTrace();
         }
     }

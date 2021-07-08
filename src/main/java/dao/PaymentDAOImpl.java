@@ -1,5 +1,6 @@
 package dao;
 
+import dao.connectionpool.DataSource;
 import domain.Payment;
 import org.apache.log4j.Logger;
 
@@ -19,8 +20,8 @@ public class PaymentDAOImpl implements PaymentDAO{
 
     {
         try {
-            connection = ConnectionPool.getConnection();
-        } catch (SQLException throwable) {
+            connection = DataSource.getConnection();
+        } catch (SQLException | ClassNotFoundException throwable) {
             throwable.printStackTrace();
         }
     }
@@ -47,26 +48,28 @@ public class PaymentDAOImpl implements PaymentDAO{
         return paymentList;
     }
 
-    public Payment getPaymentById(int paymentId){
+    public Optional<Payment> getPaymentById(int paymentId){
+        Payment payment = null;
         try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM payment " +
                 "WHERE id = ?")){
             preparedStatement.setObject(1, paymentId);
             ResultSet resultSet = preparedStatement.executeQuery();
-            resultSet.next();
+            if(resultSet.next()) {
                 BigDecimal paymentSum = resultSet.getBigDecimal("sum");
                 int usersId = resultSet.getInt("users_id");
                 Date invoicedPaymentDate = resultSet.getDate("payment_date");
 
-                return new Payment.Builder()
+                payment = new Payment.Builder()
                         .withId(paymentId)
                         .withUserId(usersId)
                         .withPaymentSum(paymentSum)
                         .withPaymentDate(invoicedPaymentDate)
                         .build();
+            }
             } catch (SQLException e) {
             logger.error("sql error", e);
         }
-        return null;
+        return Optional.ofNullable(payment);
     }
 
     public void deletePayment(Payment payment){

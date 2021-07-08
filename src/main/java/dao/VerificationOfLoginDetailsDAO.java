@@ -1,5 +1,6 @@
 package dao;
 
+import dao.connectionpool.DataSource;
 import domain.Role;
 import domain.SessionObjectForUser;
 import org.apache.log4j.Logger;
@@ -17,8 +18,8 @@ public class VerificationOfLoginDetailsDAO {
 
     {
         try {
-            connection = ConnectionPool.getConnection();
-        } catch (SQLException throwable) {
+            connection = DataSource.getConnection();
+        } catch (SQLException | ClassNotFoundException throwable) {
             throwable.printStackTrace();
         }
     }

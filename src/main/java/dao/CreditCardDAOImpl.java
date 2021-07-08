@@ -1,5 +1,6 @@
 package dao;
 
+import dao.connectionpool.DataSource;
 import domain.BankAccount;
 import domain.CreditCard;
 import org.apache.log4j.Logger;
@@ -23,8 +24,8 @@ public class CreditCardDAOImpl implements CreditCardDAO{
 
     {
         try {
-            connection = ConnectionPool.getConnection();
-        } catch (SQLException throwable) {
+            connection = DataSource.getConnection();
+        } catch (SQLException | ClassNotFoundException throwable) {
             throwable.printStackTrace();
         }
     }

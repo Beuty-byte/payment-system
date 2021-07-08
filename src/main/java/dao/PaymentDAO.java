@@ -7,6 +7,6 @@ import java.util.Optional;
 
 public interface PaymentDAO {
     List<Payment> getAllPaymentsForUser(int userId);
-    Payment getPaymentById(int paymentId);
+    Optional<Payment> getPaymentById(int paymentId);
     void deletePayment(Payment payment);
 }
