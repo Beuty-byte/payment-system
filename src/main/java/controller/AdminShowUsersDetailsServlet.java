@@ -1,7 +1,5 @@
 package controller;
 
-import domain.Role;
-import domain.SessionObjectForUser;
 import domain.User;
 import service.*;
 
@@ -17,22 +15,20 @@ public class AdminShowUsersDetailsServlet extends HttpServlet {
 
     private final UserService userInfo = UsersServiceImpl.getInstance();
     private final UrlHandler urlHandler = UrlHandlerImpl.getInstance();
-    private final PutDataInSystem putDataInSystem= PutDataInSystem.getInstance();
+    private final AdderDataInSystem putDataInSystem= AdderDataInSystem.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        SessionObjectForUser sessionObject = (SessionObjectForUser) request.getSession().getAttribute("isActive");
-        if(sessionObject != null && sessionObject.getUserRole() == Role.ADMIN){
-
+        try {
             int userId = Math.toIntExact(urlHandler.getIdFromUrl(request.getRequestURI()));
             User userById = userInfo.getUserById(userId);
             request.setAttribute("user",userById);
-
-
             request.getRequestDispatcher("/WEB-INF/view/adminShowUserDetails.jsp").forward(request, response);
-        }else {
-            response.sendRedirect("/sign-in");
+        }catch (IllegalArgumentException e){
+            response.setStatus(400);
+            response.sendRedirect("/admin/users");
         }
+
     }
 
     @Override

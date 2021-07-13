@@ -3,30 +3,32 @@
 <html>
     <head>
         <meta charset="UTF-8" />
-        <title>Index page</title>
+        <title><c:out value="${lang.creditCardDetailsTitle}" /></title>
     </head>
     <body>
 
+    <jsp:include page="header.jsp"/>
+
        <c:choose>
            <c:when test="${creditCardInfo != null}">
-               <p>Card name : ${creditCardInfo.cardName}</p>
-               <p>Card id : ${creditCardInfo.idForUserView}</p>
-               <p>Card balance : ${creditCardInfo.bankAccount.balance}</p>
+               <p><c:out value="${lang.creditCardDetailsCardName}" /> : ${creditCardInfo.cardName}</p>
+               <p><c:out value="${lang.creditCardDetailsCardId}" /> : ${creditCardInfo.idForUserView}</p>
+               <p><c:out value="${lang.creditCardDetailsCardBalance}" /> : ${creditCardInfo.bankAccount.balance}</p>
                <c:set var="refreshSent" value="${creditCardInfo.bankAccount.blocked}"/>
-               <p>Card is blocked : ${refreshSent}</p>
+               <p><c:out value="${lang.creditCardDetailsCardIsBlocked}" /> : ${refreshSent}</p>
                <br />
 <hr>
 
             <form method="POST">
-            <p>You can block your credit card</p>
+            <p><c:out value="${lang.creditCardDetailsBlockedCard}" /></p>
             <input type="hidden" name="block" value="block">
-            <input type="submit" value="blockCard">
+            <input type="submit" value="<c:out value="${lang.creditCardDetailsBlockCard}" />">
             </form>
 
 <hr>
            <form method="POST">
-           <input type="text" name="amount" placeholder="format 1419.01">
-           <input type="submit" value="top up an account">
+           <input type="text" name="amount" placeholder="<c:out value="${lang.creditCardDetailsInputFormat}" /> 1419.01">
+           <input type="submit" value="<c:out value="${lang.creditCardDetailsTopUpAnAccount}" />">
            </form>
 
            <c:forEach var="error" items="${errors}">
@@ -35,10 +37,12 @@
 
            </c:when>
            <c:otherwise>
-               <p>You can not have access to credit card info</p>
+               <p><c:out value="${lang.creditCardDetailsNotAccess}" /></p>
                <br />
            </c:otherwise>
        </c:choose>
 
+
+<jsp:include page="footer.jsp"/>
     </body>
 </html>

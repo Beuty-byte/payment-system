@@ -3,16 +3,20 @@
 <html>
     <head>
         <meta charset="UTF-8" />
-        <title>Index page</title>
+        <title><c:out value="${lang.accountTitle}"/></title>
     </head>
     <body>
 
+    <jsp:include page="header.jsp"/>
+
         <p>It's account</p>
-        <a href="/account/credit-cards">Show my credit cards</a>
+        <a href="/account/credit-cards"><c:out value="${lang.accountShowCreditCards}"/></a>
         <br>
 
-        <a href="/account/payments">Show my payments</a>
+        <a href="/account/payments"><c:out value="${lang.accountShowPayments}"/></a>
         <br>
 
+
+    <jsp:include page="footer.jsp"/>
     </body>
 </html>

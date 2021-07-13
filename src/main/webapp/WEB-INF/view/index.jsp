@@ -1,4 +1,5 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <!DOCTYPE html>
 <html>
     <head>
@@ -6,10 +7,12 @@
         <title>Index page</title>
     </head>
     <body>
-        <p>${register}</p>
-        <p>${login}</p>
-        <a href="/register">Register in system</a>
-        <br>
-        <a href="/sign-in">Sign in</a>
+
+    <jsp:include page="header.jsp"/>
+
+       <h2><c:out value="${lang.greetingAtIndexPage}" /></h2>
+
+
+    <jsp:include page="footer.jsp"/>
     </body>
 </html>

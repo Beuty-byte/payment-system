@@ -19,7 +19,7 @@ public class VerificationOfLoginDetails implements CheckedLoginDetails{
 
     @Override
     public SessionObjectForUser loginDataValidation(String email, String password){
-        return new VerificationOfLoginDetailsDAO().verificationEmailAndPassword(email, password)
+        return VerificationOfLoginDetailsDAO.getInstance().verificationEmailAndPassword(email, password)
         .orElseThrow(IllegalArgumentException::new);
     }
 }

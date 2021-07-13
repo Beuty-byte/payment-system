@@ -3,15 +3,17 @@
 <html>
     <head>
         <meta charset="UTF-8" />
-        <title>Index page</title>
+        <title><c:out value="${lang.paymentsDetailsTitle}"/></title>
     </head>
     <body>
+
+    <jsp:include page="header.jsp"/>
 
 
              <c:choose>
                  <c:when test="${paymentInfo != null}">
-                     <p>Sum for payment : ${paymentInfo.sum}</p>
-                     <p>Payment date : ${paymentInfo.invoicedPaymentDate}</p>
+                     <p><c:out value="${lang.paymentDetailsSum}"/> : ${paymentInfo.sum}</p>
+                     <p><c:out value="${lang.paymentDetailsDate}"/> : ${paymentInfo.invoicedPaymentDate}</p>
                      <br />
 
                 <c:forEach var="error" items="${paymentError}">
@@ -27,22 +29,24 @@
                 <select name="creditCardId">
                     <c:forEach var="creditCard" items="${userCreditCards}">
                         <option value="${creditCard.id}">
-                            Credit card number : ${creditCard.idForUserView}
-                            Credit card name : ${creditCard.cardName}
-                            Credit  card balance : ${creditCard.bankAccount.balance}
-                            Credit  card is blocked : ${creditCard.bankAccount.blocked}
+                            <c:out value="${lang.paymentDetailsCreditCardNumber}"/> : ${creditCard.idForUserView}
+                            <c:out value="${lang.paymentDetailsCreditCardName}"/> : ${creditCard.cardName}
+                            <c:out value="${lang.paymentDetailsCreditCardBalance}"/> : ${creditCard.bankAccount.balance}
+                            <c:out value="${lang.paymentDetailsCreditCardIsBlocked}"/> : ${creditCard.bankAccount.blocked}
                         </option>
                     </c:forEach>
                 </select>
-                <input type="submit" value="pay">
+                <input type="submit" value="<c:out value="${lang.paymentDetailsButtonForPay}"/>">
             </form>
 
                  </c:when>
                  <c:otherwise>
-                     <p>You can not have access to payment info</p>
+                     <p><c:out value="${lang.paymentDetailsAccessToInfo}"/></p>
                      <br />
                  </c:otherwise>
              </c:choose>
 
+
+<jsp:include page="footer.jsp"/>
     </body>
 </html>

@@ -3,17 +3,22 @@
 <html>
     <head>
         <meta charset="UTF-8" />
-        <title>Index page</title>
+        <title><c:out value="${lang.creditCardsTitle}"/></title>
     </head>
     <body>
-        <p>Total balance : ${totalBalance}</p>
+
+    <jsp:include page="header.jsp"/>
+
+        <p><c:out value="${lang.creditCardsTotalBalance}"/> : ${totalBalance}</p>
        <c:forEach var="creditCard" items="${creditCards}">
-                  <p>Your card Number : ${creditCard.idForUserView}</p>
-                  <p>Your balance : ${creditCard.bankAccount.balance}$</p>
+                  <p><c:out value="${lang.creditCardsCardNumber}"/> : ${creditCard.idForUserView}</p>
+                  <p><c:out value="${lang.creditCardsCardBalance}"/> : ${creditCard.bankAccount.balance}$</p>
                   <p>${creditCard.cardName}</p>
-                  <a href="/account/credit-cards/${creditCard.id}">Show details</a>
+                  <a href="/account/credit-cards/${creditCard.id}"><c:out value="${lang.creditCardsCardShowDetailsReference}"/></a>
                   <hr>
         </c:forEach>
 
+
+<jsp:include page="footer.jsp"/>
     </body>
 </html>

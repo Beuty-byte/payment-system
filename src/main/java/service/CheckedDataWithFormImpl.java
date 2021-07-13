@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 public class CheckedDataWithFormImpl implements CheckDataWithFormService {
 
@@ -21,31 +22,31 @@ public class CheckedDataWithFormImpl implements CheckDataWithFormService {
     }
 
     @Override
-    public List<String> checkData(Map<String, String[]> dataWithForm, long creditCardId) {
+    public List<String> checkData(Map<String, String[]> dataWithForm, long creditCardId, ResourceBundle lang) {
         List<String> validationsErrors = new ArrayList<>();
-        for(Map.Entry<String,String[]> el: dataWithForm.entrySet()){
-            if(el.getKey().equals("amount")){
-                validateInputValue(validationsErrors, el.getValue()[0]);
-                cardIsBlocked(validationsErrors, creditCardId);
-            }
+
+        if(dataWithForm.containsKey("amount")) {
+            validateInputValue(validationsErrors, dataWithForm.get("amount")[0], lang);
         }
+        cardIsBlocked(validationsErrors, creditCardId, lang);
+
         return validationsErrors;
     }
 
-    private void cardIsBlocked(List<String> validationsErrors, long creditCardId){
-        CreditCard creditCardById = new CreditCardDAOImpl()
+    private void cardIsBlocked(List<String> validationsErrors, long creditCardId, ResourceBundle lang){
+        CreditCard creditCardById = CreditCardDAOImpl.getInstance()
                 .getCreditCardById(creditCardId)
                 .orElseThrow(NumberFormatException::new);
         if(creditCardById.getBankAccount().getBlocked()){
-            validationsErrors.add("you can't top up your balance, your card is blocked");
+            validationsErrors.add(lang.getString("checkDataWithFormCardIsBlocked"));
         }
     }
 
-    private void validateInputValue(List<String> validationErrors, String inputAmountMoney){
+    private void validateInputValue(List<String> validationErrors, String inputAmountMoney, ResourceBundle lang){
         try {
             BigDecimal amountMoney = BigDecimal.valueOf(Double.parseDouble(inputAmountMoney));
         }catch (NumberFormatException e){
-            validationErrors.add("wrong format number");
+            validationErrors.add(lang.getString("checkDataWithFormValidateInputValue"));
         }
     }
 }

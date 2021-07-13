@@ -1,6 +1,6 @@
 package dao;
 
-import dao.connectionpool.DataSource;
+import dao.connectionpool.ConnectionData;
 import domain.CreditCard;
 import domain.User;
 import org.apache.log4j.Logger;
@@ -10,32 +10,48 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class UserDAOImpl implements UserDAO{
+
+    private final static String SELECT_AMOUNT_USERS_IN_SYSTEM = "SELECT COUNT(*) FROM users";
+    private final static String SELECT_USER = "SELECT * FROM users WHERE id = ?";
+    private final static String REGISTER_USER = "INSERT INTO users (name, surname, password,email) " +
+            "VALUES (?, ?, ?, ?)";
+
+
+    private final static UserDAOImpl userDAO = new UserDAOImpl();
+    public static UserDAOImpl getInstance(){
+        return userDAO;
+    }
+    private UserDAOImpl() {
+    }
+
     private Connection connection;
     private static final int SHOW_USERS_ON_PAGE = 5;
     private static final Logger logger = Logger.getLogger(UserDAOImpl.class);
     {
         try {
-            connection = DataSource.getConnection();
+            connection = ConnectionData.getConnection();
         } catch (SQLException | ClassNotFoundException throwable) {
             throwable.printStackTrace();
         }
     }
 
-    public static int getShowUsersOnPage() {
+    public static int getAmountUsersOnPage() {
         return SHOW_USERS_ON_PAGE;
     }
 
     public int getAmountUsersInSystem(){
         try (Statement statement = connection.createStatement()) {
-            ResultSet resultSet = statement.executeQuery("SELECT COUNT(*) FROM users");
+            ResultSet resultSet = statement.executeQuery(SELECT_AMOUNT_USERS_IN_SYSTEM);
             resultSet.next();
             return resultSet.getInt(1);
         } catch (SQLException throwable) {
             throwable.printStackTrace();
+        }finally {
+            ConnectionData.returnConnection(connection);
         }
-        DataSource.returnConnection(connection);
         throw new IllegalArgumentException();
     }
 
@@ -70,35 +86,37 @@ public class UserDAOImpl implements UserDAO{
             }
         } catch (SQLException throwable) {
             throwable.printStackTrace();
+        }finally {
+            ConnectionData.returnConnection(connection);
         }
-        DataSource.returnConnection(connection);
         return users;
     }
 
-    public User getUser(int id){
-        try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM users WHERE id = ?")){
+    public Optional<User> getUser(int id){
+        User user = null;
+        try (PreparedStatement statement = connection.prepareStatement(SELECT_USER)){
             statement.setObject(1, id);
             ResultSet resultSet = statement.executeQuery();
             resultSet.next();
             String name = resultSet.getObject("name", String.class);
             String surname = resultSet.getObject("surname", String.class);
             String email = resultSet.getObject("email", String.class);
-            List<CreditCard> creditCardList = new CreditCardDAOImpl().getAllCreditCardWithBankAccountForUser(id);
-            return new User.Builder()
+            List<CreditCard> creditCardList = CreditCardDAOImpl.getInstance().getAllCreditCardsWithBankAccountForUser(id);
+            user = new User.Builder()
                     .withName(name)
                     .withSurname(surname)
                     .withEmail(email)
                     .withCreditCards(creditCardList).build();
         } catch (SQLException throwable) {
             throwable.printStackTrace();
+        }finally {
+            ConnectionData.returnConnection(connection);
         }
-        DataSource.returnConnection(connection);
-        throw new RuntimeException();
+        return Optional.ofNullable(user);
     }
 
     public boolean registerUserInSystem(Map<String, String[]> customerData){
-        try (PreparedStatement statement = connection.prepareStatement("INSERT INTO users (name, surname, password,email) " +
-                "VALUES (?, ?, ?, ?)")){
+        try (PreparedStatement statement = connection.prepareStatement(REGISTER_USER)){
             statement.setString(1, customerData.get("name")[0]);
             statement.setString(2, customerData.get("surname")[0]);
             statement.setString(3, customerData.get("password1")[0]);
@@ -106,8 +124,9 @@ public class UserDAOImpl implements UserDAO{
             return statement.execute();
         } catch (SQLException throwable) {
             logger.error("sql error ", throwable);
+        }finally {
+            ConnectionData.returnConnection(connection);
         }
-        DataSource.returnConnection(connection);
         return false;
     }
 }

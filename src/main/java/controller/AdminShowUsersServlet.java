@@ -1,10 +1,6 @@
 package controller;
 
-import dao.UserDAOImpl;
-import domain.Role;
-import domain.SessionObjectForUser;
 import domain.User;
-import component.Pagination;
 import service.UserService;
 import service.UsersServiceImpl;
 
@@ -24,33 +20,18 @@ public class AdminShowUsersServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        SessionObjectForUser sessionObject = (SessionObjectForUser) request.getSession().getAttribute("isActive");
-        if(sessionObject != null && sessionObject.getUserRole() == Role.ADMIN){
 
-            Optional<String> page = Optional.ofNullable(request.getParameter("page"));
-            Optional<String> sortBy = Optional.ofNullable(request.getParameter("sort"));
+        Optional<String> page = Optional.ofNullable(request.getParameter("page"));
+        Optional<String> sortBy = Optional.ofNullable(request.getParameter("sort"));
 
-            List<User> allUsers = usersService.getAllUsers(page,sortBy);
+        try {
+            List<User> allUsers = usersService.getAllUsers(page, sortBy);
             request.setAttribute("users", allUsers);
-
-            int currentPage = 1;
-            if(page.isPresent()){
-                currentPage = Integer.parseInt(page.get());
-            }
-            int amountUsers = new UserDAOImpl().getAmountUsersInSystem();
-
-            request.setAttribute("pagination",
-                    new Pagination(currentPage, amountUsers , UserDAOImpl.getShowUsersOnPage()
-                            , request.getRequestURI(), sortBy).get());
-
+            request.setAttribute("pagination", usersService.getPaginationForUsers(page, sortBy, request.getRequestURI()));
             request.getRequestDispatcher("/WEB-INF/view/adminShowUsers.jsp").forward(request, response);
-        }else {
-            response.sendRedirect("/sign-in");
+        } catch (IllegalArgumentException e) {
+            response.setStatus(400);
+            response.sendRedirect("/admin/users");
         }
-    }
-
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
     }
 }

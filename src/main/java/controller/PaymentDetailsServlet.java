@@ -2,7 +2,6 @@ package controller;
 
 import domain.CreditCard;
 import domain.Payment;
-import domain.Role;
 import domain.SessionObjectForUser;
 import service.*;
 
@@ -13,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
-
+import java.util.ResourceBundle;
 
 
 @WebServlet("/account/payments/*")
@@ -26,7 +25,6 @@ public class PaymentDetailsServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         SessionObjectForUser sessionObjectForUser = (SessionObjectForUser)request.getSession().getAttribute("isActive");
-        if(sessionObjectForUser != null && sessionObjectForUser.getUserRole() == Role.CUSTOMER){
             try {
                 int paymentId = Math.toIntExact(urlHandler.getIdFromUrl(request.getRequestURI()));
                 Payment paymentById = paymentService.getPaymentById(paymentId);
@@ -35,29 +33,22 @@ public class PaymentDetailsServlet extends HttpServlet {
                 request.setAttribute("userCreditCards", allCreditsCardForUser);
                 request.getRequestDispatcher("/WEB-INF/view/paymentDetails.jsp").forward(request, response);
             }catch (IllegalArgumentException exception){
+                response.setStatus(404);
                 response.sendRedirect("/404");
             }
-        }else {
-            response.sendRedirect("/sign-in");
-        }
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        SessionObjectForUser sessionObjectForUser = (SessionObjectForUser) request.getSession().getAttribute("isActive");
-        if(sessionObjectForUser != null && sessionObjectForUser.getUserRole() == Role.CUSTOMER) {
-            long creditCardId = Long.parseLong(request.getParameter("creditCardId"));
-            int paymentId = Math.toIntExact(urlHandler.getIdFromUrl(request.getRequestURI()));
-            List<String> errors = paymentService.doPayment(creditCardId, paymentId);
-            if (errors.size() == 0) {
-                response.sendRedirect("/account/payments");
-            } else {
-                request.setAttribute("paymentError", errors);
-                doGet(request, response);
-            }
-        }else {
-            response.sendRedirect("/sign-in");
+        ResourceBundle lang = (ResourceBundle)request.getAttribute("lang");
+        long creditCardId = Long.parseLong(request.getParameter("creditCardId"));
+        int paymentId = Math.toIntExact(urlHandler.getIdFromUrl(request.getRequestURI()));
+        List<String> errors = paymentService.doPayment(creditCardId, paymentId, lang);
+        if (errors.size() == 0) {
+            response.sendRedirect("/account/payments");
+        } else {
+            request.setAttribute("paymentError", errors);
+            doGet(request, response);
         }
-
     }
 }

@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.EmptyStackException;
 import java.util.List;
+import java.util.ResourceBundle;
 
 public class PaymentServiceImpl implements PaymentService {
 
@@ -23,36 +24,36 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public List<Payment> getAllPaymentsByUserId(int userId) {
-        return new PaymentDAOImpl().getAllPaymentsForUser(userId);
+        return PaymentDAOImpl.getInstance().getAllPaymentsForUser(userId);
     }
 
     @Override
     public Payment getPaymentById(int paymentId) {
-        return new PaymentDAOImpl()
+        return PaymentDAOImpl.getInstance()
                 .getPaymentById(paymentId)
                 .orElseThrow(EmptyStackException::new);
     }
 
 
     @Override
-    public List<String> doPayment(long creditCardId, int paymentId) {
+    public List<String> doPayment(long creditCardId, int paymentId, ResourceBundle lang) {
         List<String> paymentErrors = new ArrayList<>();
-        CreditCard creditCard = new CreditCardDAOImpl()
+        CreditCard creditCard = CreditCardDAOImpl.getInstance()
                 .getCreditCardById(creditCardId)
                 .orElseThrow(NumberFormatException::new);
-        Payment payment = new PaymentDAOImpl()
+        Payment payment = PaymentDAOImpl.getInstance()
                 .getPaymentById(paymentId).orElseThrow(EmptyStackException::new);
         BigDecimal balance = creditCard.getBankAccount().getBalance();
         BigDecimal paymentSum = payment.getSum();
         BigDecimal difference = balance.subtract(paymentSum);
 
         if(difference.compareTo(BigDecimal.ZERO) < 0){
-            paymentErrors.add("not enough money on the credit card");
+            paymentErrors.add(lang.getString("paymentsErrorNotEnoughMoney"));
         }else if(creditCard.getBankAccount().getBlocked()){
-            paymentErrors.add("credit card blocked");
+            paymentErrors.add(lang.getString("paymentsErrorCreditCardIsBlocked"));
         }else {
-            new CreditCardDAOImpl().updateData(paymentSum.negate(),creditCard.getId());
-            new PaymentDAOImpl().deletePayment(payment);
+            CreditCardDAOImpl.getInstance().updateData(paymentSum.negate(),creditCard.getId());
+            PaymentDAOImpl.getInstance().deletePayment(payment);
         }
         return paymentErrors;
     }

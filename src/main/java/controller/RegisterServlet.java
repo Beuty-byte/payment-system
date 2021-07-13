@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
+import java.util.ResourceBundle;
 
 @WebServlet("/register")
 public class RegisterServlet extends HttpServlet {
@@ -26,8 +27,8 @@ public class RegisterServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-        List<String> registerErrors = validationRegisterForm.validate(request.getParameterMap());
+        ResourceBundle lang = (ResourceBundle) request.getAttribute("lang");
+        List<String> registerErrors = validationRegisterForm.validate(request.getParameterMap(), lang);
 
         if(registerErrors.size() > 0){
             request.setAttribute("errors",registerErrors);

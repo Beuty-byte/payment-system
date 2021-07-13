@@ -6,42 +6,42 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Map;
 
-public class PutDataInSystem{
+public class AdderDataInSystem {
 
-    private static final PutDataInSystem putDataInSystem= new PutDataInSystem();
+    private static final AdderDataInSystem adderDataInSystem= new AdderDataInSystem();
 
-    public static PutDataInSystem getInstance(){
-        return putDataInSystem;
+    public static AdderDataInSystem getInstance(){
+        return adderDataInSystem;
     }
 
-    private PutDataInSystem() {
+    private AdderDataInSystem() {
     }
 
     public void putData(Map<String,String[]> dataWithForm, long creditCardId) {
-        for(Map.Entry<String,String[]> el : dataWithForm.entrySet()){
-            if(el.getKey().equals("amount")){
-                putDataInDb(el.getValue()[0], creditCardId);
+
+            if(dataWithForm.containsKey("amount")){
+                putDataInDb(dataWithForm.get("amount")[0], creditCardId);
             }
-            if(el.getKey().equals("block")){
+            if(dataWithForm.containsKey("block")){
                 getBlockCreditCard(creditCardId);
             }
-            if(el.getKey().equals("unBlock")){
-                int bankAccountId = Integer.parseInt(el.getValue()[0]);
+            if(dataWithForm.containsKey("unBlock")){
+                int bankAccountId = Integer.parseInt(dataWithForm.get("unBlock")[0]);
                 unblockCreditCardByBankAccountId(bankAccountId);
             }
-        }
     }
 
     private void getBlockCreditCard(long idCreditCard){
-        new CreditCardDAOImpl().setBlockOnBankAccount(idCreditCard);
+        CreditCardDAOImpl.getInstance()
+                .setBlockOnBankAccount(idCreditCard);
     }
 
     private void unblockCreditCardByBankAccountId(int bankAccountId){
-        new CreditCardDAOImpl().unsetBlockOnBankAccount(bankAccountId);
+        CreditCardDAOImpl.getInstance().unsetBlockOnBankAccount(bankAccountId);
     }
 
     private void putDataInDb(String value, long creditCardId){
-        new CreditCardDAOImpl()
+        CreditCardDAOImpl.getInstance()
                 .updateData((BigDecimal.valueOf(Double.parseDouble(value))
                         .setScale(2, RoundingMode.HALF_DOWN))
                         ,creditCardId);

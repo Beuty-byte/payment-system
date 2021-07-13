@@ -16,6 +16,6 @@ public class RegisterUserInSystem implements Registered{
 
     @Override
     public boolean registerInSystem(Map<String, String[]> parameterMap) {
-        return new UserDAOImpl().registerUserInSystem(parameterMap);
+        return  UserDAOImpl.getInstance().registerUserInSystem(parameterMap);
     }
 }

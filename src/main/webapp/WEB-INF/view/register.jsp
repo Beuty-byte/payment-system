@@ -3,26 +3,34 @@
 <html>
     <head>
         <meta charset="UTF-8" />
-        <title>Page on register in system</title>
+        <title><c:out value="${lang.registerTitle}"/></title>
     </head>
     <body>
+
+    <jsp:include page="header.jsp"/>
+
+
         ${serverError}
         <c:forEach var="error" items="${errors}">
-            <p>${error}</p>
+         <p>${error}</p>
         </c:forEach>
 
         <form method="POST">
-            <input type="text" placeholder="enter your name" name="name">
+            <input type="text" placeholder="<c:out value="${lang.registerPlaceholderForName}"/>" name="name">
             <br>
-            <input type="text" placeholder="enter your surname" name="surname">
+            <input type="text" placeholder="<c:out value="${lang.registerPlaceholderForSurname}"/>" name="surname">
             <br>
-            <input type="password" placeholder="enter your password" name="password1">
+            <input type="password" placeholder="<c:out value="${lang.registerPlaceholderForPassword}"/>" name="password1">
             <br>
-            <input type="password" placeholder="enter your password" name="password2">
+            <input type="password" placeholder="<c:out value="${lang.registerPlaceholderForPassword}"/>" name="password2">
             <br>
-            <input type="email" placeholder="enter your email" name="email">
+            <input type="email" placeholder="<c:out value="${lang.registerPlaceholderForEmail}"/>" name="email">
             <br>
-            <input type="submit" value="Register">
+            <input type="submit" value="<c:out value="${lang.registerButtonForRegister}"/>">
         </form>
+
+
+
+        <jsp:include page="footer.jsp"/>
     </body>
 </html>

@@ -1,26 +1,32 @@
 package dao.connectionpool;
 
-public class Configuration {
-    private static Configuration configuration = new Configuration();
-    public String DB_USER_NAME;
-    public String DB_PASSWORD;
-    public String DB_URL;
-    public String DB_DRIVER;
-    public Integer DB_MAX_CONNECTION;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Properties;
 
-    public static Configuration getInstance(){
-        return configuration;
-    }
+class Configuration {
+    public static String DB_USER_NAME;
+    public static String DB_PASSWORD;
+    public static String DB_URL;
+    public static String DB_DRIVER;
+    public static Integer DB_MAX_CONNECTION = 50;
 
-    private Configuration() {
-        init();
-    }
+    static {
+        Properties props = new Properties();
+        try (InputStream in = Files.newInputStream(Path.of("src/main/resources/database.properties"))) {
+            props.load(in);
 
-    private void init(){
-        DB_USER_NAME = "bestuser";
-        DB_PASSWORD = "bestuser";
-        DB_URL = "jdbc:mysql://localhost:3306/payment_system?characterEncoding=UTF-8";
-        DB_DRIVER = "com.mysql.jdbc.Driver";
-        DB_MAX_CONNECTION = 50;
+            DB_URL = props.getProperty("url");
+            DB_USER_NAME = props.getProperty("username");
+            DB_PASSWORD = props.getProperty("password");
+            DB_DRIVER = props.getProperty("dbDriver");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
     }
 }

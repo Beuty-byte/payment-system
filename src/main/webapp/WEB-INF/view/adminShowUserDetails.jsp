@@ -3,28 +3,33 @@
 <html>
     <head>
         <meta charset="UTF-8" />
-        <title>Index page</title>
+        <title><c:out value="${lang.adminShowUsersDetailsTitle}" /></title>
     </head>
     <body>
+
+    <jsp:include page="header.jsp"/>
 
      <p>${user.name}</p>
      <p>${user.surname}</p>
      <p>${user.email}</p>
      <hr>
-     List credit cards
+     <c:out value="${lang.adminShowUsersDetailsCreditCardsList}" />
 
      <c:forEach var="card" items="${user.creditCards}">
-                          <p>Number credit card :${card.idForUserView}</p>
+                          <p><c:out value="${lang.adminShowUsersDetailsCreditCardNumber}" /> :${card.idForUserView}</p>
                           <c:if test="${card.bankAccount.blocked}">
                                 <form method="POST">
-                                     <p>Unblock card</p>
+                                     <p><c:out value="${lang.adminShowUsersDetailsCreditCardUnlock}" /></p>
                                      <input type="hidden" name="unBlock" value="${card.bankAccount.id}">
-                                        <input type="submit" value="UnBlockCard">
+                                        <input type="submit"
+                                        value="<c:out value="${lang.adminShowUsersDetailsCreditCardUnlockButton}" />">
                                 </form>
                           </c:if>
     <hr>
      </c:forEach>
 
+
+<jsp:include page="footer.jsp"/>
 
     </body>
 </html>

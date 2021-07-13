@@ -2,7 +2,6 @@ package controller;
 
 
 import domain.Payment;
-import domain.Role;
 import domain.SessionObjectForUser;
 import service.PaymentService;
 import service.PaymentServiceImpl;
@@ -23,14 +22,9 @@ public class PaymentServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         SessionObjectForUser sessionObject = (SessionObjectForUser)request.getSession().getAttribute("isActive");
-
-        if(sessionObject != null && sessionObject.getUserRole() == Role.CUSTOMER){
-            List<Payment> payments = paymentService.getAllPaymentsByUserId(sessionObject.getUserId());
-            request.setAttribute("payments", payments);
-            request.getRequestDispatcher("/WEB-INF/view/payment.jsp").forward(request, response);
-        }else {
-            response.sendRedirect("/sign-in");
-        }
+        List<Payment> payments = paymentService.getAllPaymentsByUserId(sessionObject.getUserId());
+        request.setAttribute("payments", payments);
+        request.getRequestDispatcher("/WEB-INF/view/payment.jsp").forward(request, response);
     }
 
 }

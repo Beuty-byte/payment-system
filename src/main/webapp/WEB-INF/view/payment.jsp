@@ -3,16 +3,20 @@
 <html>
     <head>
         <meta charset="UTF-8" />
-        <title>Index page</title>
+        <title><c:out value="${lang.paymentTitle}" /></title>
     </head>
     <body>
 
+    <jsp:include page="header.jsp"/>
+
        <c:forEach var="payment" items="${payments}">
-                  <p>${payment.sum}</p>
-                  <p>${payment.invoicedPaymentDate}</p>
-                  <a href="/account/payments/${payment.id}">Show payment details</a>
+                  <p><c:out value="${lang.paymentSum}" /> :${payment.sum}</p>
+                  <p><c:out value="${lang.paymentDate}" /> :${payment.invoicedPaymentDate}</p>
+                  <a href="/account/payments/${payment.id}"><c:out value="${lang.paymentShowDetails}" /></a>
                   <hr>
         </c:forEach>
 
+
+<jsp:include page="footer.jsp"/>
     </body>
 </html>

@@ -1,9 +1,12 @@
 package service;
 
+import domain.User;
+
 import java.util.List;
 import java.util.Optional;
 
 public interface UserService {
-    List<domain.User> getAllUsers(Optional<String> page, Optional<String> sortByValue);
-    domain.User getUserById(int id);
+    List<User> getAllUsers(Optional<String> page, Optional<String> sortByValue);
+    User getUserById(int id);
+    String getPaginationForUsers(Optional<String> page, Optional<String> sortBy, String Uri);
 }

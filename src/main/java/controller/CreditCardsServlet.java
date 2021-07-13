@@ -1,7 +1,6 @@
 package controller;
 
 import domain.CreditCard;
-import domain.Role;
 import domain.SessionObjectForUser;
 import service.CreditCardService;
 import service.CreditCardServiceImpl;
@@ -22,19 +21,10 @@ public class CreditCardsServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         SessionObjectForUser sessionObject = (SessionObjectForUser)request.getSession().getAttribute("isActive");
-        if(sessionObject != null && sessionObject.getUserRole() == Role.CUSTOMER){
-            List<CreditCard> creditCardList =  creditCardInfo.getAllCreditsCardForUser(sessionObject.getUserId());
-            String totalBalance = creditCardInfo.getTotalBalance(sessionObject.getUserId());
-            request.setAttribute("totalBalance", totalBalance);
-            request.setAttribute("creditCards", creditCardList);
-            request.getRequestDispatcher("/WEB-INF/view/creditCards.jsp").forward(request, response);
-        }else {
-            response.sendRedirect("/sign-in");
-        }
-    }
-
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
+        List<CreditCard> creditCardList =  creditCardInfo.getAllCreditsCardForUser(sessionObject.getUserId());
+        String totalBalance = creditCardInfo.getTotalBalance(sessionObject.getUserId());
+        request.setAttribute("totalBalance", totalBalance);
+        request.setAttribute("creditCards", creditCardList);
+        request.getRequestDispatcher("/WEB-INF/view/creditCards.jsp").forward(request, response);
     }
 }

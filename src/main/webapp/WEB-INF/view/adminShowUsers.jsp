@@ -3,29 +3,35 @@
 <html>
     <head>
         <meta charset="UTF-8" />
-        <title>Index page</title>
+        <title><c:out value="${lang.adminShowUsersTitle}" /></title>
     </head>
     <body>
 
+    <jsp:include page="header.jsp"/>
+
     <form>
-    <p>Choose sort</p>
-    <p><input name="sort" type="radio" value="name"> sort by name</p>
-     <p><input name="sort" type="radio" value="name-desc"> sort by name desc</p>
-     <p><input name="sort" type="radio" value="surname" checked> sort by surname</p>
-     <p><input name="sort" type="radio" value="surname-desc" checked> sort by surname desc</p>
-     <p><input name="sort" type="radio" value="email" checked> sort by email</p>
-     <p><input name="sort" type="radio" value="email-desc" checked> sort by email desc</p>
-     <p><input type="submit" value="sort"></p>
+    <p><c:out value="${lang.adminShowUsersMessageBeforeSort}" /></p>
+    <p><input name="sort" type="radio" value="name"> <c:out value="${lang.adminShowUsersSortByName}" /></p>
+     <p><input name="sort" type="radio" value="name-desc"> <c:out value="${lang.adminShowUsersSortByNameDesc}" /></p>
+     <p><input name="sort" type="radio" value="surname" checked> <c:out value="${lang.adminShowUsersSortBySurname}" /></p>
+     <p><input name="sort" type="radio" value="surname-desc" checked> <c:out value="${lang.adminShowUsersSortBySurnameDesc}" /></p>
+     <p><input name="sort" type="radio" value="email" checked> <c:out value="${lang.adminShowUsersSortByEmail}" /></p>
+     <p><input name="sort" type="radio" value="email-desc" checked> <c:out value="${lang.adminShowUsersSortByEmailDesc}" /></p>
+     <p><input type="submit" value="<c:out value="${lang.adminShowUsersSortButtonValue}" />"></p>
     </form>
 
      <c:forEach var="user" items="${users}">
                      <p>${user.name}</p>
                      <p>${user.surname}</p>
                      <p>${user.email}</p>
-                     <a href="/admin/users/${user.id}">show details</a>
+                     <a href="/admin/users/${user.id}"><c:out value="${lang.adminShowUsersReferenceToDetails}" /></a>
                      <hr>
      </c:forEach>
 
    <div>${pagination}</div>
+
+
+
+   <jsp:include page="footer.jsp"/>
     </body>
 </html>

@@ -1,5 +1,6 @@
 package service;
 
+import component.Pagination;
 import dao.UserDAOImpl;
 import domain.User;
 
@@ -10,7 +11,7 @@ public class UsersServiceImpl implements UserService {
 
     private static final UsersServiceImpl usersService = new UsersServiceImpl();
 
-    public static UsersServiceImpl getInstance(){
+    public static UsersServiceImpl getInstance() {
         return usersService;
     }
 
@@ -18,45 +19,57 @@ public class UsersServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> getAllUsers(Optional<String> page, Optional<String> sortByValue){
+    public List<User> getAllUsers(Optional<String> page, Optional<String> sortByValue) {
         Integer paginationPage = null;
         String sortBy = null;
-        if(page.isPresent()){
-          paginationPage =  transformQueryPageToInteger(page.get());
+        if (page.isPresent()) {
+            paginationPage = transformQueryPageToInteger(page.get());
         }
 
-        if(sortByValue.isPresent()){
+        if (sortByValue.isPresent()) {
             sortBy = getValidSortValue(sortByValue.get());
         }
 
-        return new UserDAOImpl().getAllUser(paginationPage, sortBy);
+        return UserDAOImpl.getInstance().getAllUser(paginationPage, sortBy);
     }
 
-    private String getValidSortValue(String sortByValue){
-        switch (sortByValue){
-            case "name": return "name";
-            case "name-desc": return "name DESC";
-            case "surname": return "surname";
-            case "surname-desc": return "surname DESC";
-            case "email": return "email";
-            case "email-desc": return "email DESC";
-            default: throw  new IllegalArgumentException();
+    private String getValidSortValue(String sortByValue) {
+        switch (sortByValue) {
+            case "name":
+                return "name";
+            case "name-desc":
+                return "name DESC";
+            case "surname":
+                return "surname";
+            case "surname-desc":
+                return "surname DESC";
+            case "email":
+                return "email";
+            case "email-desc":
+                return "email DESC";
+            default:
+                throw new IllegalArgumentException();
         }
     }
 
     @Override
-    public User getUserById(int id){
-        return new UserDAOImpl().getUser(id);
+    public User getUserById(int id) {
+        return UserDAOImpl.getInstance().getUser(id).orElseThrow(IllegalArgumentException::new);
     }
 
-    private Integer transformQueryPageToInteger(String page){
-        int paginationPage = 0;
-        try {
-             paginationPage =  Integer.parseInt(page);
-        }catch (NumberFormatException e){
-            System.out.println("wrong format page");
+    private Integer transformQueryPageToInteger(String page) {
+        return Integer.parseInt(page);
+    }
+
+    public String getPaginationForUsers(Optional<String> page, Optional<String> sortBy, String Uri){
+        int currentPage = 1;
+        if(page.isPresent()){
+            currentPage = Integer.parseInt(page.get());
         }
-        return paginationPage;
+        int amountUsers = UserDAOImpl.getInstance().getAmountUsersInSystem();
+
+        return new Pagination(currentPage, amountUsers , UserDAOImpl.getAmountUsersOnPage()
+                , Uri, sortBy).get();
     }
 
 }

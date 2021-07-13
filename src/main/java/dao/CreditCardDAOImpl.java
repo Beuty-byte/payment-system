@@ -1,6 +1,6 @@
 package dao;
 
-import dao.connectionpool.DataSource;
+import dao.connectionpool.ConnectionData;
 import domain.BankAccount;
 import domain.CreditCard;
 import org.apache.log4j.Logger;
@@ -18,21 +18,43 @@ import java.util.List;
 import java.util.Optional;
 
 public class CreditCardDAOImpl implements CreditCardDAO{
+
+    private final static String SELECT_CREDIT_CARDS = "SELECT * FROM credit_card WHERE users_id = ?";
+    private final static String SELECT_TOTAL_BALANCE = "SELECT SUM(ba.balance) FROM bank_account ba" +
+            " JOIN credit_card cr ON cr.bank_account_id = ba.id WHERE cr.users_id = ?";
+    private final static String SELECT_CREDIT_CARD = "SELECT * FROM credit_card WHERE id = ?";
+    private final static String SELECT_BANK_ACCOUNT = "SELECT * FROM bank_account WHERE id = ?";
+    private final static String UPDATE_DATA_BANK_ACCOUNT = "UPDATE bank_account SET balance =" +
+            " ? WHERE ID = ?";
+    private final static String SET_BLOCK = "UPDATE bank_account SET " +
+            "is_blocked = true WHERE id = ?";
+    private final static String UNSET_BLOCK = "UPDATE bank_account SET " +
+            "is_blocked = false WHERE id = ?";
+    private final static String CHECK_ACCESS_TO_CREDIT_CARD = "SELECT COUNT(*) FROM credit_card " +
+            "WHERE users_id = ? AND id = ?";
+
+    private final static CreditCardDAOImpl creditCardDAO = new CreditCardDAOImpl();
+    public static CreditCardDAOImpl getInstance(){
+        return creditCardDAO;
+    }
+    private CreditCardDAOImpl() {
+    }
+
     private Connection connection;
     private final CreditCardServiceImpl creditCardInfo = CreditCardServiceImpl.getInstance();
     final static Logger logger = Logger.getLogger(CreditCardDAOImpl.class);
 
     {
         try {
-            connection = DataSource.getConnection();
+            connection = ConnectionData.getConnection();
         } catch (SQLException | ClassNotFoundException throwable) {
             throwable.printStackTrace();
         }
     }
 
-    public List<CreditCard> getAllCreditCardWithBankAccountForUser(int id){
+    public List<CreditCard> getAllCreditCardsWithBankAccountForUser(int id){
         List<CreditCard> creditCardList = new ArrayList<>();
-        try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM credit_card WHERE users_id = ?")){
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_CREDIT_CARDS)){
             preparedStatement.setObject(1,id);
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()){
@@ -45,15 +67,15 @@ public class CreditCardDAOImpl implements CreditCardDAO{
             }
         } catch (SQLException throwable) {
             logger.error("wrong format id", throwable);
+        }finally {
+            ConnectionData.returnConnection(connection);
         }
-        DataSource.returnConnection(connection);
         return creditCardList;
     }
 
     public Optional<BigDecimal> getTotalBalance(int id){
         BigDecimal totalBalance = null;
-        try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT SUM(ba.balance) FROM bank_account ba" +
-                " JOIN credit_card cr ON cr.bank_account_id = ba.id WHERE cr.users_id = ?")){
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_TOTAL_BALANCE)){
             preparedStatement.setObject(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
             if(resultSet.next()) {
@@ -61,14 +83,15 @@ public class CreditCardDAOImpl implements CreditCardDAO{
             }
         } catch (SQLException throwable) {
             logger.error("sql error", throwable);
+        }finally {
+            ConnectionData.returnConnection(connection);
         }
-        DataSource.returnConnection(connection);
         return Optional.ofNullable(totalBalance);
     }
 
     public Optional<CreditCard> getCreditCardById(long id){
         CreditCard creditCard = null;
-        try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM credit_card WHERE id = ?")){
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_CREDIT_CARD)){
             preparedStatement.setObject(1,id);
             ResultSet resultSet = preparedStatement.executeQuery();
             if(resultSet.next()) {
@@ -82,13 +105,14 @@ public class CreditCardDAOImpl implements CreditCardDAO{
 
         } catch (SQLException throwable) {
             logger.error("sql error", throwable);
+        }finally {
+            ConnectionData.returnConnection(connection);
         }
-        DataSource.returnConnection(connection);
         return Optional.ofNullable(creditCard);
     }
 
     private BankAccount getBankAccount(int id){
-        try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM bank_account WHERE id = ?")){
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_BANK_ACCOUNT)){
             preparedStatement.setObject(1,id);
             ResultSet resultSet = preparedStatement.executeQuery();
             resultSet.next();
@@ -99,8 +123,9 @@ public class CreditCardDAOImpl implements CreditCardDAO{
                 );
         } catch (SQLException throwable) {
             logger.error("sql error", throwable);
+        }finally {
+            ConnectionData.returnConnection(connection);
         }
-        DataSource.returnConnection(connection);
         throw new RuntimeException();
     }
 
@@ -111,15 +136,15 @@ public class CreditCardDAOImpl implements CreditCardDAO{
                 .orElseThrow(NumberFormatException::new);
         BigDecimal sumForUpdate = bigDecimal.add(creditCard.getBankAccount().getBalance())
                 .setScale(2, RoundingMode.HALF_DOWN);
-        try (PreparedStatement preparedStatement = connection.prepareStatement("UPDATE bank_account SET balance = " +
-                "? WHERE ID = ?")){
+        try (PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_DATA_BANK_ACCOUNT)){
             preparedStatement.setObject(1,sumForUpdate);
             preparedStatement.setObject(2,creditCard.getBankAccount().getId());
             preparedStatement.execute();
         } catch (SQLException throwable) {
             logger.error("sql error", throwable);
+        }finally {
+            ConnectionData.returnConnection(connection);
         }
-        DataSource.returnConnection(connection);
     }
 
 
@@ -127,44 +152,41 @@ public class CreditCardDAOImpl implements CreditCardDAO{
         CreditCard creditCard = new CreditCardDAOImpl()
                 .getCreditCardById(creditCardId)
                 .orElseThrow(NullPointerException::new);
-        try (PreparedStatement preparedStatement = connection.prepareStatement("UPDATE bank_account SET " +
-                "is_blocked = true WHERE id = ?")){
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SET_BLOCK)){
             preparedStatement.setObject(1, creditCard.getBankAccount().getId());
             preparedStatement.execute();
         } catch (SQLException throwable) {
             logger.error("sql error", throwable);
+        }finally {
+            ConnectionData.returnConnection(connection);
         }
-        DataSource.returnConnection(connection);
     }
 
     public void unsetBlockOnBankAccount(int bankAccountId){
-        try (PreparedStatement preparedStatement = connection.prepareStatement("UPDATE bank_account SET " +
-                "is_blocked = false WHERE id = ?")){
+        try (PreparedStatement preparedStatement = connection.prepareStatement(UNSET_BLOCK)){
             preparedStatement.setObject(1, bankAccountId);
             preparedStatement.execute();
         } catch (SQLException throwable) {
             logger.error("sql error", throwable);
+        }finally {
+            ConnectionData.returnConnection(connection);
         }
-        DataSource.returnConnection(connection);
     }
 
     public boolean checkAccessToCreditCardInformation(long creditCardId,int userId){
-        try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT COUNT(*) FROM credit_card " +
-                "WHERE users_id = ? AND id = ?")){
+        try (PreparedStatement preparedStatement = connection.prepareStatement(CHECK_ACCESS_TO_CREDIT_CARD)){
             preparedStatement.setObject(1,userId);
             preparedStatement.setObject(2,creditCardId);
             ResultSet resultSet = preparedStatement.executeQuery();
             resultSet.next();
             int amount = resultSet.getInt(1);
-            if(amount > 0){
-                return true;
-            }
-            return false;
+            return amount > 0;
 
         } catch (SQLException throwable) {
             logger.error("sql error", throwable);
+        }finally {
+            ConnectionData.returnConnection(connection);
         }
-        DataSource.returnConnection(connection);
         return false;
     }
 }

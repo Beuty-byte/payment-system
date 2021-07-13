@@ -1,7 +1,6 @@
 package controller;
 
 import domain.CreditCard;
-import domain.Role;
 import domain.SessionObjectForUser;
 import service.*;
 
@@ -12,34 +11,33 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
+import java.util.ResourceBundle;
 
 
 @WebServlet("/account/credit-cards/*")
 public class CreditCardDetailsServlet extends HttpServlet {
 
     private final CreditCardService creditCardInfo = CreditCardServiceImpl.getInstance();
-    private final PutDataInSystem putDataInSystem = PutDataInSystem.getInstance();
+    private final AdderDataInSystem putDataInSystem = AdderDataInSystem.getInstance();
     private final UrlHandler urlHandler = UrlHandlerImpl.getInstance();
     private final CheckDataWithFormService verifiableData = CheckedDataWithFormImpl.getInstance();
+    private final static String BLOCK = "block";
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         SessionObjectForUser sessionObject = (SessionObjectForUser)request.getSession().getAttribute("isActive");
-        if(sessionObject != null && sessionObject.getUserRole() == Role.CUSTOMER){
-            long creditCardId = urlHandler.getIdFromUrl(request.getRequestURI());
-            CreditCard creditCardById = creditCardInfo.getCreditCardById(creditCardId, sessionObject.getUserId());
-            request.setAttribute("creditCardInfo", creditCardById);
-            request.getRequestDispatcher("/WEB-INF/view/creditCardDetails.jsp").forward(request, response);
-        }else {
-            response.sendRedirect("/sign-in");
-            }
+        long creditCardId = urlHandler.getIdFromUrl(request.getRequestURI());
+        CreditCard creditCardById = creditCardInfo.getCreditCardById(creditCardId, sessionObject.getUserId());
+        request.setAttribute("creditCardInfo", creditCardById);
+        request.getRequestDispatcher("/WEB-INF/view/creditCardDetails.jsp").forward(request, response);
         }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        ResourceBundle lang = (ResourceBundle) request.getAttribute("lang");
         long creditCardId = urlHandler.getIdFromUrl(request.getRequestURI());
-        List<String> errors = verifiableData.checkData(request.getParameterMap(), creditCardId);
-        if(request.getParameter("block") != null){
+        List<String> errors = verifiableData.checkData(request.getParameterMap(), creditCardId, lang);
+        if(request.getParameter(BLOCK) != null){
             putDataInSystem.putData(request.getParameterMap(), creditCardId);
         }
 

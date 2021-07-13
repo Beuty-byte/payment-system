@@ -1,6 +1,6 @@
 package dao;
 
-import dao.connectionpool.DataSource;
+import dao.connectionpool.ConnectionData;
 import domain.Role;
 import domain.SessionObjectForUser;
 import org.apache.log4j.Logger;
@@ -13,12 +13,21 @@ import java.util.Optional;
 
 public class VerificationOfLoginDetailsDAO {
 
+    private final static String SELECT_EMAIL_AND_PASSWORD = "SELECT id, role FROM users WHERE email = ? AND password = ?";
+    private static final VerificationOfLoginDetailsDAO verificationOfLoginDetailsDAO =
+            new VerificationOfLoginDetailsDAO();
+    public static VerificationOfLoginDetailsDAO getInstance(){
+        return verificationOfLoginDetailsDAO;
+    }
+    private VerificationOfLoginDetailsDAO() {
+    }
+
     private Connection connection;
     private static final Logger logger = Logger.getLogger(VerificationOfLoginDetailsDAO.class);
 
     {
         try {
-            connection = DataSource.getConnection();
+            connection = ConnectionData.getConnection();
         } catch (SQLException | ClassNotFoundException throwable) {
             throwable.printStackTrace();
         }
@@ -26,8 +35,7 @@ public class VerificationOfLoginDetailsDAO {
 
     public Optional<SessionObjectForUser> verificationEmailAndPassword(String email, String password){
         SessionObjectForUser sessionObjectForUser = null;
-        try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT id, role FROM users " +
-                "WHERE email = ? AND password = ?")){
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_EMAIL_AND_PASSWORD)){
             preparedStatement.setString(1,email);
             preparedStatement.setString(2,password);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -41,8 +49,9 @@ public class VerificationOfLoginDetailsDAO {
             }
         } catch (SQLException throwable) {
             logger.error("sql exception ", throwable);
+        }finally {
+            ConnectionData.returnConnection(connection);
         }
-        DataSource.returnConnection(connection);
         return Optional.ofNullable(sessionObjectForUser);
     }
 

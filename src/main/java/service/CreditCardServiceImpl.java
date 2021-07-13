@@ -20,14 +20,14 @@ public class CreditCardServiceImpl implements CreditCardService {
 
     @Override
     public List<CreditCard> getAllCreditsCardForUser(int userId) {
-        return new CreditCardDAOImpl().getAllCreditCardWithBankAccountForUser(userId);
+        return CreditCardDAOImpl.getInstance().getAllCreditCardsWithBankAccountForUser(userId);
     }
 
     @Override
     public CreditCard getCreditCardById(long creditCardId, int userId){
         boolean access = userAccessToCreditCard(creditCardId, userId);
         if(access){
-            return new CreditCardDAOImpl()
+            return CreditCardDAOImpl.getInstance()
                     .getCreditCardById(creditCardId)
                     .orElseThrow(NumberFormatException::new);
         }
@@ -36,7 +36,7 @@ public class CreditCardServiceImpl implements CreditCardService {
 
 
     private boolean userAccessToCreditCard(long creditCardId, int userId){
-        return new CreditCardDAOImpl().checkAccessToCreditCardInformation(creditCardId, userId);
+        return CreditCardDAOImpl.getInstance().checkAccessToCreditCardInformation(creditCardId, userId);
     }
 
     @Override
@@ -47,7 +47,7 @@ public class CreditCardServiceImpl implements CreditCardService {
 
     @Override
     public String getTotalBalance(int userId) {
-        BigDecimal totalBalance = new CreditCardDAOImpl()
+        BigDecimal totalBalance = CreditCardDAOImpl.getInstance()
                 .getTotalBalance(userId)
                 .orElseThrow(IllegalArgumentException::new);
         return totalBalance.toString();

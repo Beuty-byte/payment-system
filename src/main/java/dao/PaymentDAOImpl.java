@@ -1,6 +1,6 @@
 package dao;
 
-import dao.connectionpool.DataSource;
+import dao.connectionpool.ConnectionData;
 import domain.Payment;
 import org.apache.log4j.Logger;
 
@@ -14,25 +14,38 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-public class PaymentDAOImpl implements PaymentDAO{
+public class PaymentDAOImpl implements PaymentDAO {
+
+    private final static String SELECT_ALL_PAYMENT = "SELECT id, sum, payment_date " +
+            "FROM payment  WHERE payment.users_id = ?";
+    private final static String SELECT_PAYMENT = "SELECT * FROM payment WHERE id = ?";
+    private final static String DELETE_PAYMENT = "DELETE FROM payment WHERE id = ?";
+
+    private final static PaymentDAOImpl paymentDAO = new PaymentDAOImpl();
+    public static PaymentDAOImpl getInstance(){
+        return paymentDAO;
+    }
+
+    private PaymentDAOImpl() {
+    }
+
     private Connection connection;
     private static final Logger logger = Logger.getLogger(PaymentDAOImpl.class);
 
     {
         try {
-            connection = DataSource.getConnection();
+            connection = ConnectionData.getConnection();
         } catch (SQLException | ClassNotFoundException throwable) {
             throwable.printStackTrace();
         }
     }
 
-    public List<Payment> getAllPaymentsForUser(int userId){
+    public List<Payment> getAllPaymentsForUser(int userId) {
         List<Payment> paymentList = new ArrayList<>();
-        try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT id, sum, payment_date " +
-                "FROM payment  WHERE payment.users_id = ?")){
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_PAYMENT)) {
             preparedStatement.setObject(1, userId);
             ResultSet resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()){
+            while (resultSet.next()) {
                 int paymentId = resultSet.getInt("id");
                 BigDecimal paymentSum = resultSet.getBigDecimal("sum");
                 Date invoicedPaymentDate = resultSet.getDate("payment_date");
@@ -44,18 +57,18 @@ public class PaymentDAOImpl implements PaymentDAO{
             }
         } catch (SQLException throwable) {
             logger.error("sql error", throwable);
+        } finally {
+            ConnectionData.returnConnection(connection);
         }
-        DataSource.returnConnection(connection);
         return paymentList;
     }
 
-    public Optional<Payment> getPaymentById(int paymentId){
+    public Optional<Payment> getPaymentById(int paymentId) {
         Payment payment = null;
-        try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM payment " +
-                "WHERE id = ?")){
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_PAYMENT)) {
             preparedStatement.setObject(1, paymentId);
             ResultSet resultSet = preparedStatement.executeQuery();
-            if(resultSet.next()) {
+            if (resultSet.next()) {
                 BigDecimal paymentSum = resultSet.getBigDecimal("sum");
                 int usersId = resultSet.getInt("users_id");
                 Date invoicedPaymentDate = resultSet.getDate("payment_date");
@@ -67,21 +80,22 @@ public class PaymentDAOImpl implements PaymentDAO{
                         .withPaymentDate(invoicedPaymentDate)
                         .build();
             }
-            } catch (SQLException e) {
+        } catch (SQLException e) {
             logger.error("sql error", e);
+        } finally {
+            ConnectionData.returnConnection(connection);
         }
-        DataSource.returnConnection(connection);
         return Optional.ofNullable(payment);
     }
 
-    public void deletePayment(Payment payment){
-        try (PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM payment " +
-                "WHERE id = ?")){
+    public void deletePayment(Payment payment) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(DELETE_PAYMENT)) {
             preparedStatement.setObject(1, payment.getId());
             preparedStatement.execute();
         } catch (SQLException e) {
             logger.error("sql error", e);
+        } finally {
+            ConnectionData.returnConnection(connection);
         }
-        DataSource.returnConnection(connection);
     }
 }
