@@ -40,19 +40,11 @@ public class CreditCardDAOImpl implements CreditCardDAO{
     private CreditCardDAOImpl() {
     }
 
-    private Connection connection;
     private final CreditCardServiceImpl creditCardInfo = CreditCardServiceImpl.getInstance();
     final static Logger logger = Logger.getLogger(CreditCardDAOImpl.class);
 
-    {
-        try {
-            connection = ConnectionData.getConnection();
-        } catch (SQLException | ClassNotFoundException throwable) {
-            throwable.printStackTrace();
-        }
-    }
-
     public List<CreditCard> getAllCreditCardsWithBankAccountForUser(int id){
+        Connection connection = ConnectionData.getConnection();
         List<CreditCard> creditCardList = new ArrayList<>();
         try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_CREDIT_CARDS)){
             preparedStatement.setObject(1,id);
@@ -74,6 +66,7 @@ public class CreditCardDAOImpl implements CreditCardDAO{
     }
 
     public Optional<BigDecimal> getTotalBalance(int id){
+        Connection connection = ConnectionData.getConnection();
         BigDecimal totalBalance = null;
         try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_TOTAL_BALANCE)){
             preparedStatement.setObject(1, id);
@@ -90,6 +83,7 @@ public class CreditCardDAOImpl implements CreditCardDAO{
     }
 
     public Optional<CreditCard> getCreditCardById(long id){
+        Connection connection = ConnectionData.getConnection();
         CreditCard creditCard = null;
         try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_CREDIT_CARD)){
             preparedStatement.setObject(1,id);
@@ -112,6 +106,7 @@ public class CreditCardDAOImpl implements CreditCardDAO{
     }
 
     private BankAccount getBankAccount(int id){
+        Connection connection = ConnectionData.getConnection();
         try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_BANK_ACCOUNT)){
             preparedStatement.setObject(1,id);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -131,6 +126,7 @@ public class CreditCardDAOImpl implements CreditCardDAO{
 
 
     public void updateData(BigDecimal bigDecimal, long creditCardId) {
+        Connection connection = ConnectionData.getConnection();
         CreditCard creditCard = new CreditCardDAOImpl()
                 .getCreditCardById(creditCardId)
                 .orElseThrow(NumberFormatException::new);
@@ -149,6 +145,7 @@ public class CreditCardDAOImpl implements CreditCardDAO{
 
 
     public void setBlockOnBankAccount(long creditCardId) {
+        Connection connection = ConnectionData.getConnection();
         CreditCard creditCard = new CreditCardDAOImpl()
                 .getCreditCardById(creditCardId)
                 .orElseThrow(NullPointerException::new);
@@ -163,6 +160,7 @@ public class CreditCardDAOImpl implements CreditCardDAO{
     }
 
     public void unsetBlockOnBankAccount(int bankAccountId){
+        Connection connection = ConnectionData.getConnection();
         try (PreparedStatement preparedStatement = connection.prepareStatement(UNSET_BLOCK)){
             preparedStatement.setObject(1, bankAccountId);
             preparedStatement.execute();
@@ -174,6 +172,7 @@ public class CreditCardDAOImpl implements CreditCardDAO{
     }
 
     public boolean checkAccessToCreditCardInformation(long creditCardId,int userId){
+        Connection connection = ConnectionData.getConnection();
         try (PreparedStatement preparedStatement = connection.prepareStatement(CHECK_ACCESS_TO_CREDIT_CARD)){
             preparedStatement.setObject(1,userId);
             preparedStatement.setObject(2,creditCardId);

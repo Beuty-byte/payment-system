@@ -27,22 +27,15 @@ public class UserDAOImpl implements UserDAO{
     private UserDAOImpl() {
     }
 
-    private Connection connection;
     private static final int SHOW_USERS_ON_PAGE = 5;
     private static final Logger logger = Logger.getLogger(UserDAOImpl.class);
-    {
-        try {
-            connection = ConnectionData.getConnection();
-        } catch (SQLException | ClassNotFoundException throwable) {
-            throwable.printStackTrace();
-        }
-    }
 
     public static int getAmountUsersOnPage() {
         return SHOW_USERS_ON_PAGE;
     }
 
     public int getAmountUsersInSystem(){
+        Connection connection = ConnectionData.getConnection();
         try (Statement statement = connection.createStatement()) {
             ResultSet resultSet = statement.executeQuery(SELECT_AMOUNT_USERS_IN_SYSTEM);
             resultSet.next();
@@ -56,6 +49,7 @@ public class UserDAOImpl implements UserDAO{
     }
 
     public List<User> getAllUser(Integer page, String sortByValue){
+        Connection connection = ConnectionData.getConnection();
         List<User> users = new ArrayList<>();
         try (Statement statement = connection.createStatement()){
 
@@ -93,6 +87,7 @@ public class UserDAOImpl implements UserDAO{
     }
 
     public Optional<User> getUser(int id){
+        Connection connection = ConnectionData.getConnection();
         User user = null;
         try (PreparedStatement statement = connection.prepareStatement(SELECT_USER)){
             statement.setObject(1, id);
@@ -116,6 +111,7 @@ public class UserDAOImpl implements UserDAO{
     }
 
     public boolean registerUserInSystem(Map<String, String[]> customerData){
+        Connection connection = ConnectionData.getConnection();
         try (PreparedStatement statement = connection.prepareStatement(REGISTER_USER)){
             statement.setString(1, customerData.get("name")[0]);
             statement.setString(2, customerData.get("surname")[0]);

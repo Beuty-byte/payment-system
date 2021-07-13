@@ -22,18 +22,11 @@ public class VerificationOfLoginDetailsDAO {
     private VerificationOfLoginDetailsDAO() {
     }
 
-    private Connection connection;
+
     private static final Logger logger = Logger.getLogger(VerificationOfLoginDetailsDAO.class);
 
-    {
-        try {
-            connection = ConnectionData.getConnection();
-        } catch (SQLException | ClassNotFoundException throwable) {
-            throwable.printStackTrace();
-        }
-    }
-
     public Optional<SessionObjectForUser> verificationEmailAndPassword(String email, String password){
+        Connection connection = ConnectionData.getConnection();
         SessionObjectForUser sessionObjectForUser = null;
         try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_EMAIL_AND_PASSWORD)){
             preparedStatement.setString(1,email);

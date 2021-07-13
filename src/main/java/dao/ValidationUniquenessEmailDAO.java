@@ -21,18 +21,10 @@ public class ValidationUniquenessEmailDAO {
     private ValidationUniquenessEmailDAO() {
     }
 
-    private Connection connection;
     private static final Logger logger = Logger.getLogger(ValidationUniquenessEmailDAO.class);
 
-    {
-        try {
-            connection = ConnectionData.getConnection();
-        } catch (SQLException | ClassNotFoundException throwable) {
-            logger.error("connection error ",throwable);
-        }
-    }
-
     public Optional<String> checkEmailForUniqueness(String email){
+        Connection connection = ConnectionData.getConnection();
         String resultQueryEmail = null;
         try (PreparedStatement statement = connection.prepareStatement(CHECK_EMAIL)){
             statement.setString(1,email);

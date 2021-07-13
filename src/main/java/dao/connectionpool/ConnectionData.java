@@ -2,12 +2,12 @@ package dao.connectionpool;
 
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.SQLException;
+
 
 public class ConnectionData {
     private static final ConnectionPool poll = new ConnectionPool();
 
-    public static Connection getConnection() throws ClassNotFoundException, SQLException {
+    public static Connection getConnection() {
         return poll.getConnectionFromPool();
     }
 

@@ -29,18 +29,10 @@ public class PaymentDAOImpl implements PaymentDAO {
     private PaymentDAOImpl() {
     }
 
-    private Connection connection;
     private static final Logger logger = Logger.getLogger(PaymentDAOImpl.class);
 
-    {
-        try {
-            connection = ConnectionData.getConnection();
-        } catch (SQLException | ClassNotFoundException throwable) {
-            throwable.printStackTrace();
-        }
-    }
-
     public List<Payment> getAllPaymentsForUser(int userId) {
+        Connection connection = ConnectionData.getConnection();
         List<Payment> paymentList = new ArrayList<>();
         try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_PAYMENT)) {
             preparedStatement.setObject(1, userId);
@@ -64,6 +56,7 @@ public class PaymentDAOImpl implements PaymentDAO {
     }
 
     public Optional<Payment> getPaymentById(int paymentId) {
+        Connection connection = ConnectionData.getConnection();
         Payment payment = null;
         try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_PAYMENT)) {
             preparedStatement.setObject(1, paymentId);
@@ -89,6 +82,7 @@ public class PaymentDAOImpl implements PaymentDAO {
     }
 
     public void deletePayment(Payment payment) {
+        Connection connection = ConnectionData.getConnection();
         try (PreparedStatement preparedStatement = connection.prepareStatement(DELETE_PAYMENT)) {
             preparedStatement.setObject(1, payment.getId());
             preparedStatement.execute();
