@@ -4,11 +4,10 @@
     <head>
         <meta charset="UTF-8" />
         <title><c:out value="${lang.adminShowUsersTitle}" /></title>
-    </head>
-    <body>
+
 
     <jsp:include page="header.jsp"/>
-
+    <div class="container">
     <form>
     <p><c:out value="${lang.adminShowUsersMessageBeforeSort}" /></p>
     <p><input name="sort" type="radio" value="name"> <c:out value="${lang.adminShowUsersSortByName}" /></p>
@@ -28,8 +27,8 @@
                      <hr>
      </c:forEach>
 
-   <div>${pagination}</div>
-
+   <div class="pagination">${pagination}</div>
+    </div>
 
 
    <jsp:include page="footer.jsp"/>

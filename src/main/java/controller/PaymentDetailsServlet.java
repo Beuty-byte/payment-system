@@ -41,13 +41,27 @@ public class PaymentDetailsServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         ResourceBundle lang = (ResourceBundle)request.getAttribute("lang");
-        long creditCardId = Long.parseLong(request.getParameter("creditCardId"));
-        int paymentId = Math.toIntExact(urlHandler.getIdFromUrl(request.getRequestURI()));
-        List<String> errors = paymentService.doPayment(creditCardId, paymentId, lang);
-        if (errors.size() == 0) {
-            response.sendRedirect("/account/payments");
-        } else {
-            request.setAttribute("paymentError", errors);
+
+        SessionObjectForUser sessionObjectForUser = (SessionObjectForUser) request.getSession().getAttribute("isActive");
+
+        try {
+            long creditCardId = Long.parseLong(request.getParameter("creditCardId"));
+            int paymentId = Math.toIntExact(urlHandler.getIdFromUrl(request.getRequestURI()));
+
+            if (creditCardService.userAccessToCreditCard(creditCardId, sessionObjectForUser.getUserId())) {
+                List<String> errors = paymentService.doPayment(creditCardId, paymentId, lang);
+                if (errors.size() == 0) {
+                    response.sendRedirect("/account/payments");
+                } else {
+                    request.setAttribute("paymentError", errors);
+                    doGet(request, response);
+                }
+            } else {
+                response.setStatus(403);
+                response.sendRedirect("/");
+            }
+        }catch (NumberFormatException e){
+            response.setStatus(400);
             doGet(request, response);
         }
     }

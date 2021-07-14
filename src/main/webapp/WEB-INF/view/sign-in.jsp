@@ -4,23 +4,30 @@
     <head>
         <meta charset="UTF-8" />
         <title><c:out value="${lang.SigInTitle}"/></title>
-    </head>
-    <body>
+
 
     <jsp:include page="header.jsp"/>
 
+    <div class="container">
 
-            <p>${error}</p>
+        <div class="form_wrapper">
+            <div class="in_form">
+            
 
         <form method="POST">
-            <input type="email" placeholder="<c:out value="${lang.SigInPlaceholderForEmail}"/>" name="email">
+            <input class="form_input" type="email" placeholder="<c:out value="${lang.SigInPlaceholderForEmail}"/>" name="email">
             <br>
-            <input type="password" placeholder="<c:out value="${lang.SigInPlaceholderForPassword}"/>" name="password">
+            <input class="form_input" type="password" placeholder="<c:out value="${lang.SigInPlaceholderForPassword}"/>" name="password">
             <br>
-            <input type="submit" value="<c:out value="${lang.SigInButtonForLogin}"/>">
+            <input class="form_button" type="submit" value="<c:out value="${lang.SigInButtonForLogin}"/>">
         </form>
+        <p>${error}</p>
+            </div>
+            
+        </div>
 
 
+    </div>
         <jsp:include page="footer.jsp"/>
     </body>
 </html>

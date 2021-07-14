@@ -4,12 +4,11 @@
     <head>
         <meta charset="UTF-8" />
         <title><c:out value="${lang.paymentsDetailsTitle}"/></title>
-    </head>
-    <body>
+
 
     <jsp:include page="header.jsp"/>
 
-
+    <div class="container">
              <c:choose>
                  <c:when test="${paymentInfo != null}">
                      <p><c:out value="${lang.paymentDetailsSum}"/> : ${paymentInfo.sum}</p>
@@ -45,7 +44,7 @@
                      <br />
                  </c:otherwise>
              </c:choose>
-
+    </div>
 
 <jsp:include page="footer.jsp"/>
     </body>

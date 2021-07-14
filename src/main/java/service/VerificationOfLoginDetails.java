@@ -3,10 +3,6 @@ package service;
 
 import dao.VerificationOfLoginDetailsDAO;
 import domain.SessionObjectForUser;
-import org.apache.log4j.Logger;
-
-import java.util.Map;
-import java.util.Optional;
 
 public class VerificationOfLoginDetails implements CheckedLoginDetails{
 

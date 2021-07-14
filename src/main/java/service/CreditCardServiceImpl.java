@@ -1,15 +1,17 @@
 package service;
 
+
 import dao.CreditCardDAOImpl;
 import domain.CreditCard;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
+import java.util.Map;
 
 public class CreditCardServiceImpl implements CreditCardService {
 
     private static final CreditCardServiceImpl creditCardService = new CreditCardServiceImpl();
-
 
     public static CreditCardServiceImpl getInstance(){
         return creditCardService;
@@ -34,8 +36,8 @@ public class CreditCardServiceImpl implements CreditCardService {
         return null;
     }
 
-
-    private boolean userAccessToCreditCard(long creditCardId, int userId){
+    @Override
+    public boolean userAccessToCreditCard(long creditCardId, int userId){
         return CreditCardDAOImpl.getInstance().checkAccessToCreditCardInformation(creditCardId, userId);
     }
 
@@ -67,4 +69,36 @@ public class CreditCardServiceImpl implements CreditCardService {
         }
         return stringBuilder.toString();
     }
+
+    @Override
+    public void putData(Map<String,String[]> dataWithForm, long creditCardId) {
+
+        if(dataWithForm.containsKey("amount")){
+            putDataInDb(dataWithForm.get("amount")[0], creditCardId);
+        }
+        if(dataWithForm.containsKey("block")){
+            getBlockCreditCard(creditCardId);
+        }
+        if(dataWithForm.containsKey("unBlock")){
+            int bankAccountId = Integer.parseInt(dataWithForm.get("unBlock")[0]);
+            unblockCreditCardByBankAccountId(bankAccountId);
+        }
+    }
+
+    private void getBlockCreditCard(long idCreditCard){
+        CreditCardDAOImpl.getInstance()
+                .setBlockOnBankAccount(idCreditCard);
+    }
+
+    private void unblockCreditCardByBankAccountId(int bankAccountId){
+        CreditCardDAOImpl.getInstance().unsetBlockOnBankAccount(bankAccountId);
+    }
+
+    private void putDataInDb(String value, long creditCardId){
+        CreditCardDAOImpl.getInstance()
+                .updateData((BigDecimal.valueOf(Double.parseDouble(value))
+                                .setScale(2, RoundingMode.HALF_DOWN))
+                        ,creditCardId);
+    }
+
 }

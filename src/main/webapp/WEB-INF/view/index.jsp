@@ -5,13 +5,14 @@
     <head>
         <meta charset="UTF-8" />
         <title>Index page</title>
-    </head>
-    <body>
+
+
+
 
     <jsp:include page="header.jsp"/>
-
-       <h2><c:out value="${lang.greetingAtIndexPage}" /></h2>
-
+    <div class="container">
+       <h1 class="greeting"><c:out value="${lang.greetingAtIndexPage}" /></h1>
+       <div class="container">
 
     <jsp:include page="footer.jsp"/>
     </body>

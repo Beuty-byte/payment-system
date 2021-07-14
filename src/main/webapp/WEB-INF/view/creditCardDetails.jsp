@@ -4,11 +4,10 @@
     <head>
         <meta charset="UTF-8" />
         <title><c:out value="${lang.creditCardDetailsTitle}" /></title>
-    </head>
-    <body>
+
 
     <jsp:include page="header.jsp"/>
-
+    <div class="container">
        <c:choose>
            <c:when test="${creditCardInfo != null}">
                <p><c:out value="${lang.creditCardDetailsCardName}" /> : ${creditCardInfo.cardName}</p>
@@ -42,7 +41,7 @@
            </c:otherwise>
        </c:choose>
 
-
+       </div>
 <jsp:include page="footer.jsp"/>
     </body>
 </html>

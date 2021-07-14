@@ -17,8 +17,7 @@ import java.util.ResourceBundle;
 @WebServlet("/account/credit-cards/*")
 public class CreditCardDetailsServlet extends HttpServlet {
 
-    private final CreditCardService creditCardInfo = CreditCardServiceImpl.getInstance();
-    private final AdderDataInSystem putDataInSystem = AdderDataInSystem.getInstance();
+    private final CreditCardService creditCardService = CreditCardServiceImpl.getInstance();
     private final UrlHandler urlHandler = UrlHandlerImpl.getInstance();
     private final CheckDataWithFormService verifiableData = CheckedDataWithFormImpl.getInstance();
     private final static String BLOCK = "block";
@@ -27,7 +26,7 @@ public class CreditCardDetailsServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         SessionObjectForUser sessionObject = (SessionObjectForUser)request.getSession().getAttribute("isActive");
         long creditCardId = urlHandler.getIdFromUrl(request.getRequestURI());
-        CreditCard creditCardById = creditCardInfo.getCreditCardById(creditCardId, sessionObject.getUserId());
+        CreditCard creditCardById = creditCardService.getCreditCardById(creditCardId, sessionObject.getUserId());
         request.setAttribute("creditCardInfo", creditCardById);
         request.getRequestDispatcher("/WEB-INF/view/creditCardDetails.jsp").forward(request, response);
         }
@@ -38,13 +37,13 @@ public class CreditCardDetailsServlet extends HttpServlet {
         long creditCardId = urlHandler.getIdFromUrl(request.getRequestURI());
         List<String> errors = verifiableData.checkData(request.getParameterMap(), creditCardId, lang);
         if(request.getParameter(BLOCK) != null){
-            putDataInSystem.putData(request.getParameterMap(), creditCardId);
+            creditCardService.putData(request.getParameterMap(), creditCardId);
         }
 
         if(errors.size() > 0){
             request.setAttribute("errors",errors);
         }else {
-            putDataInSystem.putData(request.getParameterMap(),creditCardId);
+            creditCardService.putData(request.getParameterMap(),creditCardId);
         }
 
         doGet(request,response);

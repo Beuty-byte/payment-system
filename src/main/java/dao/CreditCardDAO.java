@@ -1,6 +1,5 @@
 package dao;
 
-import domain.BankAccount;
 import domain.CreditCard;
 
 import java.math.BigDecimal;
@@ -14,4 +13,5 @@ public interface CreditCardDAO {
     void updateData(BigDecimal bigDecimal, long creditCardId);
     void setBlockOnBankAccount(long creditCardId);
     void unsetBlockOnBankAccount(int bankAccountId);
+    boolean checkAccessToCreditCardInformation(long creditCardId,int userId);
 }

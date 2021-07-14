@@ -1,6 +1,7 @@
 package service;
 
 import dao.CreditCardDAOImpl;
+import dao.PaymentDAO;
 import dao.PaymentDAOImpl;
 import domain.CreditCard;
 import domain.Payment;
@@ -14,6 +15,7 @@ import java.util.ResourceBundle;
 public class PaymentServiceImpl implements PaymentService {
 
     private static final PaymentServiceImpl paymentService = new PaymentServiceImpl();
+    private final PaymentDAO paymentDAO = PaymentDAOImpl.getInstance();
 
     public static PaymentServiceImpl getInstance(){
         return paymentService;
@@ -24,16 +26,15 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public List<Payment> getAllPaymentsByUserId(int userId) {
-        return PaymentDAOImpl.getInstance().getAllPaymentsForUser(userId);
+        return paymentDAO.getAllPaymentsForUser(userId);
     }
 
     @Override
     public Payment getPaymentById(int paymentId) {
-        return PaymentDAOImpl.getInstance()
+        return paymentDAO
                 .getPaymentById(paymentId)
                 .orElseThrow(EmptyStackException::new);
     }
-
 
     @Override
     public List<String> doPayment(long creditCardId, int paymentId, ResourceBundle lang) {

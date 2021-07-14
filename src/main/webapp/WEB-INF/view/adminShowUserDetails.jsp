@@ -4,11 +4,10 @@
     <head>
         <meta charset="UTF-8" />
         <title><c:out value="${lang.adminShowUsersDetailsTitle}" /></title>
-    </head>
-    <body>
+
 
     <jsp:include page="header.jsp"/>
-
+    <div class="container">
      <p>${user.name}</p>
      <p>${user.surname}</p>
      <p>${user.email}</p>
@@ -27,7 +26,7 @@
                           </c:if>
     <hr>
      </c:forEach>
-
+    </div>
 
 <jsp:include page="footer.jsp"/>
 

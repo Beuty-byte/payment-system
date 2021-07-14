@@ -15,7 +15,7 @@ public class AdminShowUsersDetailsServlet extends HttpServlet {
 
     private final UserService userInfo = UsersServiceImpl.getInstance();
     private final UrlHandler urlHandler = UrlHandlerImpl.getInstance();
-    private final AdderDataInSystem putDataInSystem= AdderDataInSystem.getInstance();
+    private final CreditCardService creditCardService = CreditCardServiceImpl.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -33,7 +33,7 @@ public class AdminShowUsersDetailsServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-       putDataInSystem.putData(request.getParameterMap(), 0L);
+       creditCardService.putData(request.getParameterMap(), 0L);
        doGet(request,response);
     }
 }
