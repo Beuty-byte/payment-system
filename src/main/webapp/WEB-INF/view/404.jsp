@@ -1,2 +1,5 @@
 <jsp:include page="header.jsp"/>
-<h2>404</h2>
+    <div class="container">
+        <h2>${lang.notFound}</h2>
+    </div>
+<jsp:include page="footer.jsp"/>

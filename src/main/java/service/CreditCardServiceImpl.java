@@ -1,6 +1,7 @@
 package service;
 
 
+import dao.CreditCardDAO;
 import dao.CreditCardDAOImpl;
 import domain.CreditCard;
 
@@ -11,10 +12,12 @@ import java.util.Map;
 
 public class CreditCardServiceImpl implements CreditCardService {
 
-    private static final CreditCardServiceImpl creditCardService = new CreditCardServiceImpl();
+    private final CreditCardDAO creditCardDAO = CreditCardDAOImpl.getInstance();
+
+    private static final CreditCardServiceImpl INSTANCE = new CreditCardServiceImpl();
 
     public static CreditCardServiceImpl getInstance(){
-        return creditCardService;
+        return INSTANCE;
     }
 
     private CreditCardServiceImpl(){
@@ -22,14 +25,14 @@ public class CreditCardServiceImpl implements CreditCardService {
 
     @Override
     public List<CreditCard> getAllCreditsCardForUser(int userId) {
-        return CreditCardDAOImpl.getInstance().getAllCreditCardsWithBankAccountForUser(userId);
+        return creditCardDAO.getAllCreditCardsWithBankAccountForUser(userId);
     }
 
     @Override
     public CreditCard getCreditCardById(long creditCardId, int userId){
         boolean access = userAccessToCreditCard(creditCardId, userId);
         if(access){
-            return CreditCardDAOImpl.getInstance()
+            return creditCardDAO
                     .getCreditCardById(creditCardId)
                     .orElseThrow(NumberFormatException::new);
         }
@@ -38,7 +41,7 @@ public class CreditCardServiceImpl implements CreditCardService {
 
     @Override
     public boolean userAccessToCreditCard(long creditCardId, int userId){
-        return CreditCardDAOImpl.getInstance().checkAccessToCreditCardInformation(creditCardId, userId);
+        return creditCardDAO.checkAccessToCreditCardInformation(creditCardId, userId);
     }
 
     @Override
@@ -86,18 +89,16 @@ public class CreditCardServiceImpl implements CreditCardService {
     }
 
     private void getBlockCreditCard(long idCreditCard){
-        CreditCardDAOImpl.getInstance()
-                .setBlockOnBankAccount(idCreditCard);
+        creditCardDAO.setBlockOnBankAccount(idCreditCard);
     }
 
     private void unblockCreditCardByBankAccountId(int bankAccountId){
-        CreditCardDAOImpl.getInstance().unsetBlockOnBankAccount(bankAccountId);
+        creditCardDAO.unsetBlockOnBankAccount(bankAccountId);
     }
 
     private void putDataInDb(String value, long creditCardId){
-        CreditCardDAOImpl.getInstance()
-                .updateData((BigDecimal.valueOf(Double.parseDouble(value))
-                                .setScale(2, RoundingMode.HALF_DOWN))
+        creditCardDAO.updateData((BigDecimal.valueOf(Double.parseDouble(value))
+                        .setScale(2, RoundingMode.HALF_DOWN))
                         ,creditCardId);
     }
 

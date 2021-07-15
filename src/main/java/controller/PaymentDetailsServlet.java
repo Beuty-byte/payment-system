@@ -3,6 +3,7 @@ package controller;
 import domain.CreditCard;
 import domain.Payment;
 import domain.SessionObjectForUser;
+import org.apache.log4j.Logger;
 import service.*;
 
 import javax.servlet.ServletException;
@@ -21,6 +22,7 @@ public class PaymentDetailsServlet extends HttpServlet {
     private final PaymentService paymentService = PaymentServiceImpl.getInstance();
     private final CreditCardService creditCardService = CreditCardServiceImpl.getInstance();
     private final UrlHandler urlHandler = UrlHandlerImpl.getInstance();
+    private static final Logger logger = Logger.getLogger(PaymentDetailsServlet.class);
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -57,10 +59,12 @@ public class PaymentDetailsServlet extends HttpServlet {
                     doGet(request, response);
                 }
             } else {
+                logger.error("user with ip :"+ request.getRemoteAddr() + " trying to pay with someone else's card");
                 response.setStatus(403);
                 response.sendRedirect("/");
             }
         }catch (NumberFormatException e){
+            logger.error("user with ip :"+ request.getRemoteAddr() + " input wrong query");
             response.setStatus(400);
             doGet(request, response);
         }

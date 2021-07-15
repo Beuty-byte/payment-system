@@ -12,6 +12,13 @@
     <jsp:include page="header.jsp"/>
     <div class="container">
        <h1 class="greeting"><c:out value="${lang.greetingAtIndexPage}" /></h1>
+
+       <c:if test="${not empty sessionScope.isActive}">
+                   <a href="${referenceToAccount}">
+                   <c:out value="${lang.referenceAtIndexPage}" />
+                   </a>
+       </c:if>
+
        <div class="container">
 
     <jsp:include page="footer.jsp"/>

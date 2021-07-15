@@ -3,7 +3,7 @@ package controller;
 import domain.Role;
 import domain.SessionObjectForUser;
 import service.CheckedLoginDetails;
-import service.VerificationOfLoginDetails;
+import service.VerificationOfLoginDetailsService;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -17,7 +17,7 @@ import java.io.IOException;
 @WebServlet("/sign-in")
 public class SignInServlet extends HttpServlet {
 
-    private final CheckedLoginDetails checkedLoginDetails = VerificationOfLoginDetails.getInstance();
+    private final CheckedLoginDetails checkedLoginDetails = VerificationOfLoginDetailsService.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

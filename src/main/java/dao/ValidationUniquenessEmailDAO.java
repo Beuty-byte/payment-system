@@ -13,10 +13,10 @@ public class ValidationUniquenessEmailDAO {
 
     private final static String CHECK_EMAIL = "SELECT email FROM users WHERE email = ?";
 
-    private static final ValidationUniquenessEmailDAO validationUniquenessEmail =
+    private static final ValidationUniquenessEmailDAO INSTANCE =
             new ValidationUniquenessEmailDAO();
     public static ValidationUniquenessEmailDAO getInstance(){
-        return validationUniquenessEmail;
+        return INSTANCE;
     }
     private ValidationUniquenessEmailDAO() {
     }

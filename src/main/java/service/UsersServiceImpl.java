@@ -1,6 +1,7 @@
 package service;
 
 import component.Pagination;
+import dao.UserDAO;
 import dao.UserDAOImpl;
 import domain.User;
 
@@ -10,6 +11,7 @@ import java.util.Optional;
 public class UsersServiceImpl implements UserService {
 
     private static final UsersServiceImpl usersService = new UsersServiceImpl();
+    private final UserDAO userDAO = UserDAOImpl.getInstance();
 
     public static UsersServiceImpl getInstance() {
         return usersService;
@@ -30,7 +32,7 @@ public class UsersServiceImpl implements UserService {
             sortBy = getValidSortValue(sortByValue.get());
         }
 
-        return UserDAOImpl.getInstance().getAllUser(paginationPage, sortBy);
+        return userDAO.getAllUser(paginationPage, sortBy);
     }
 
     private String getValidSortValue(String sortByValue) {
@@ -54,7 +56,7 @@ public class UsersServiceImpl implements UserService {
 
     @Override
     public User getUserById(int id) {
-        return UserDAOImpl.getInstance().getUser(id).orElseThrow(IllegalArgumentException::new);
+        return userDAO.getUser(id).orElseThrow(IllegalArgumentException::new);
     }
 
     private Integer transformQueryPageToInteger(String page) {
@@ -66,7 +68,7 @@ public class UsersServiceImpl implements UserService {
         if(page.isPresent()){
             currentPage = Integer.parseInt(page.get());
         }
-        int amountUsers = UserDAOImpl.getInstance().getAmountUsersInSystem();
+        int amountUsers = userDAO.getAmountUsersInSystem();
 
         return new Pagination(currentPage, amountUsers , UserDAOImpl.getAmountUsersOnPage()
                 , Uri, sortBy).get();

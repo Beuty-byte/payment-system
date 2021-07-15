@@ -10,10 +10,11 @@ import java.util.ResourceBundle;
 
 public class ValidationRegisterForm implements VerifiableData {
 
-    private static final ValidationRegisterForm validationRegisterForm = new ValidationRegisterForm();
+    private static final ValidationRegisterForm INSTANCE = new ValidationRegisterForm();
+    private final ValidationUniquenessEmailDAO validationUniquenessEmailDAO = ValidationUniquenessEmailDAO.getInstance();
 
     public static ValidationRegisterForm getInstance(){
-        return validationRegisterForm;
+        return INSTANCE;
     }
 
     private ValidationRegisterForm(){}
@@ -41,7 +42,7 @@ public class ValidationRegisterForm implements VerifiableData {
         if(!email.matches("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$")){
             registerErrors.add(lang.getString("validationRegisterFormCheckEmailFromFormOnValid"));
         }
-        if(ValidationUniquenessEmailDAO.getInstance().checkEmailForUniqueness(email).isPresent()){
+        if(validationUniquenessEmailDAO.checkEmailForUniqueness(email).isPresent()){
             registerErrors.add(lang.getString("validationRegisterFormCheckEmailForUniqueness"));
         }
     }

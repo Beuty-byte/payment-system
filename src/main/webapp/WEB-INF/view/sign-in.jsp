@@ -21,7 +21,11 @@
             <br>
             <input class="form_button" type="submit" value="<c:out value="${lang.SigInButtonForLogin}"/>">
         </form>
+
+
         <p>${error}</p>
+
+
             </div>
             
         </div>

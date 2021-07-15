@@ -75,6 +75,7 @@ public class UserDAOImpl implements UserDAO{
                 User user = new User.Builder().withId(id)
                                 .withName(name)
                                 .withSurname(surName)
+                                .withCreditCards(CreditCardDAOImpl.getInstance().getAllCreditCardsWithBankAccountForUser(id))
                                 .withEmail(email).build();
                 users.add(user);
             }

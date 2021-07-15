@@ -1,5 +1,6 @@
 package service;
 
+import dao.CreditCardDAO;
 import dao.CreditCardDAOImpl;
 import dao.PaymentDAO;
 import dao.PaymentDAOImpl;
@@ -14,11 +15,12 @@ import java.util.ResourceBundle;
 
 public class PaymentServiceImpl implements PaymentService {
 
-    private static final PaymentServiceImpl paymentService = new PaymentServiceImpl();
+    private static final PaymentServiceImpl INSTANCE = new PaymentServiceImpl();
     private final PaymentDAO paymentDAO = PaymentDAOImpl.getInstance();
+    private final CreditCardDAO creditCardDAO = CreditCardDAOImpl.getInstance();
 
     public static PaymentServiceImpl getInstance(){
-        return paymentService;
+        return INSTANCE;
     }
 
     private PaymentServiceImpl() {
@@ -39,10 +41,10 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public List<String> doPayment(long creditCardId, int paymentId, ResourceBundle lang) {
         List<String> paymentErrors = new ArrayList<>();
-        CreditCard creditCard = CreditCardDAOImpl.getInstance()
+        CreditCard creditCard = creditCardDAO
                 .getCreditCardById(creditCardId)
                 .orElseThrow(NumberFormatException::new);
-        Payment payment = PaymentDAOImpl.getInstance()
+        Payment payment = paymentDAO
                 .getPaymentById(paymentId).orElseThrow(EmptyStackException::new);
         BigDecimal balance = creditCard.getBankAccount().getBalance();
         BigDecimal paymentSum = payment.getSum();
@@ -53,8 +55,8 @@ public class PaymentServiceImpl implements PaymentService {
         }else if(creditCard.getBankAccount().getBlocked()){
             paymentErrors.add(lang.getString("paymentsErrorCreditCardIsBlocked"));
         }else {
-            CreditCardDAOImpl.getInstance().updateData(paymentSum.negate(),creditCard.getId());
-            PaymentDAOImpl.getInstance().deletePayment(payment);
+            creditCardDAO.updateData(paymentSum.negate(),creditCard.getId());
+            paymentDAO.deletePayment(payment);
         }
         return paymentErrors;
     }

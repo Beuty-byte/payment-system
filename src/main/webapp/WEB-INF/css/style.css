@@ -176,3 +176,8 @@ margin-bottom: 80px;
     flex-direction: column;
     align-items: center;
 }
+
+.user_with_blocked_card{
+font-size: large;
+color: orange;
+}

@@ -1,6 +1,7 @@
 package service;
 
 
+import dao.CreditCardDAO;
 import dao.CreditCardDAOImpl;
 import domain.CreditCard;
 
@@ -12,10 +13,11 @@ import java.util.ResourceBundle;
 
 public class CheckedDataWithFormImpl implements CheckDataWithFormService {
 
-    private static final CheckedDataWithFormImpl checkedDataWithForm = new CheckedDataWithFormImpl();
+    private static final CheckedDataWithFormImpl INSTANCE = new CheckedDataWithFormImpl();
+    private final CreditCardDAO creditCardDAO = CreditCardDAOImpl.getInstance();
 
     public static CheckedDataWithFormImpl getInstance(){
-        return checkedDataWithForm;
+        return INSTANCE;
     }
 
     private CheckedDataWithFormImpl() {
@@ -34,8 +36,7 @@ public class CheckedDataWithFormImpl implements CheckDataWithFormService {
     }
 
     private void cardIsBlocked(List<String> validationsErrors, long creditCardId, ResourceBundle lang){
-        CreditCard creditCardById = CreditCardDAOImpl.getInstance()
-                .getCreditCardById(creditCardId)
+        CreditCard creditCardById = creditCardDAO.getCreditCardById(creditCardId)
                 .orElseThrow(NumberFormatException::new);
         if(creditCardById.getBankAccount().getBlocked()){
             validationsErrors.add(lang.getString("checkDataWithFormCardIsBlocked"));
