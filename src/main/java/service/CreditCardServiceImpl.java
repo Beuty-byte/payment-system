@@ -45,32 +45,11 @@ public class CreditCardServiceImpl implements CreditCardService {
     }
 
     @Override
-    public String getIdForPrettyPrint(long id){
-        String idForPrint = String.valueOf(id);
-        return transformId(idForPrint.toCharArray());
-    }
-
-    @Override
     public String getTotalBalance(int userId) {
         BigDecimal totalBalance = CreditCardDAOImpl.getInstance()
                 .getTotalBalance(userId)
                 .orElseThrow(IllegalArgumentException::new);
         return totalBalance.toString();
-    }
-
-    private String transformId(char[] idForPrint){
-        StringBuilder stringBuilder = new StringBuilder();
-        int countBeforeDrop = 0;
-        for (char el : idForPrint){
-            if(countBeforeDrop == 4){
-                stringBuilder.append(' ').append(el);
-                countBeforeDrop = 0;
-            }else {
-                stringBuilder.append(el);
-            }
-            countBeforeDrop++;
-        }
-        return stringBuilder.toString();
     }
 
     @Override

@@ -15,7 +15,9 @@ import java.io.IOException;
 import java.util.List;
 import java.util.ResourceBundle;
 
-
+/**
+ * servlet for page /account/payments/*
+ */
 @WebServlet("/account/payments/*")
 public class PaymentDetailsServlet extends HttpServlet {
 
@@ -24,25 +26,39 @@ public class PaymentDetailsServlet extends HttpServlet {
     private final UrlHandler urlHandler = UrlHandlerImpl.getInstance();
     private static final Logger logger = Logger.getLogger(PaymentDetailsServlet.class);
 
+    /**
+     * method show payment
+     * @param request request
+     * @param response response
+     * @throws ServletException servlet exception
+     * @throws IOException IO exception
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        SessionObjectForUser sessionObjectForUser = (SessionObjectForUser)request.getSession().getAttribute("isActive");
-            try {
-                int paymentId = Math.toIntExact(urlHandler.getIdFromUrl(request.getRequestURI()));
-                Payment paymentById = paymentService.getPaymentById(paymentId);
-                List<CreditCard> allCreditsCardForUser = creditCardService.getAllCreditsCardForUser(sessionObjectForUser.getUserId());
-                request.setAttribute("paymentInfo", paymentById);
-                request.setAttribute("userCreditCards", allCreditsCardForUser);
-                request.getRequestDispatcher("/WEB-INF/view/paymentDetails.jsp").forward(request, response);
-            }catch (IllegalArgumentException exception){
-                response.setStatus(404);
-                response.sendRedirect("/404");
-            }
+        SessionObjectForUser sessionObjectForUser = (SessionObjectForUser) request.getSession().getAttribute("isActive");
+        try {
+            int paymentId = Math.toIntExact(urlHandler.getIdFromUrl(request.getRequestURI()));
+            Payment paymentById = paymentService.getPaymentById(paymentId);
+            List<CreditCard> allCreditsCardForUser = creditCardService.getAllCreditsCardForUser(sessionObjectForUser.getUserId());
+            request.setAttribute("paymentInfo", paymentById);
+            request.setAttribute("userCreditCards", allCreditsCardForUser);
+            request.getRequestDispatcher("/WEB-INF/view/paymentDetails.jsp").forward(request, response);
+        } catch (IllegalArgumentException exception) {
+            response.setStatus(404);
+            response.sendRedirect("/404");
+        }
     }
 
+    /**
+     * method for make payment
+     * @param request request
+     * @param response response
+     * @throws ServletException servlet exception
+     * @throws IOException IO exception
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        ResourceBundle lang = (ResourceBundle)request.getAttribute("lang");
+        ResourceBundle lang = (ResourceBundle) request.getAttribute("lang");
 
         SessionObjectForUser sessionObjectForUser = (SessionObjectForUser) request.getSession().getAttribute("isActive");
 
@@ -59,12 +75,12 @@ public class PaymentDetailsServlet extends HttpServlet {
                     doGet(request, response);
                 }
             } else {
-                logger.error("user with ip :"+ request.getRemoteAddr() + " trying to pay with someone else's card");
+                logger.error("user with ip :" + request.getRemoteAddr() + " trying to pay with someone else's card");
                 response.setStatus(403);
                 response.sendRedirect("/");
             }
-        }catch (NumberFormatException e){
-            logger.error("user with ip :"+ request.getRemoteAddr() + " input wrong query");
+        } catch (NumberFormatException e) {
+            logger.error("user with ip :" + request.getRemoteAddr() + " input wrong query");
             response.setStatus(400);
             doGet(request, response);
         }

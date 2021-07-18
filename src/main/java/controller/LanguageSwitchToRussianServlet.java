@@ -8,7 +8,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-
+/**
+ * servlet for switch language on russian
+ */
 @WebServlet("/ru")
 public class LanguageSwitchToRussianServlet extends HttpServlet {
     @Override

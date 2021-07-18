@@ -35,7 +35,7 @@ public class PaymentServiceImpl implements PaymentService {
     public Payment getPaymentById(int paymentId) {
         return paymentDAO
                 .getPaymentById(paymentId)
-                .orElseThrow(EmptyStackException::new);
+                .orElseThrow(IllegalArgumentException::new);
     }
 
     @Override

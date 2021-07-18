@@ -13,17 +13,33 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
-
+/**
+ * servlet for page /sign-in
+ */
 @WebServlet("/sign-in")
 public class SignInServlet extends HttpServlet {
 
     private final CheckedLoginDetails checkedLoginDetails = VerificationOfLoginDetailsService.getInstance();
 
+    /**
+     * method for show sign-in page
+     * @param request request
+     * @param response response
+     * @throws ServletException servlet exception
+     * @throws IOException IO exception
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.getRequestDispatcher("/WEB-INF/view/sign-in.jsp").forward(request, response);
     }
 
+    /**
+     * method for validation user data and login
+     * @param request request
+     * @param response response
+     * @throws ServletException servlet exception
+     * @throws IOException IO exception
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 

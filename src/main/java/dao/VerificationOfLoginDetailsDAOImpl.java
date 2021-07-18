@@ -32,13 +32,11 @@ public class VerificationOfLoginDetailsDAOImpl implements VerificationOfLoginDet
             preparedStatement.setString(1,email);
             preparedStatement.setString(2,password);
             ResultSet resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()){
-                if(resultSet.getObject("id",Integer.class) != null){
+            if(resultSet.next()){
 
                     sessionObjectForUser = new SessionObjectForUser(resultSet.getObject("id", Integer.class)
                             , Role.valueOf(resultSet.getObject("role", String.class).toUpperCase()));
 
-                }
             }
         } catch (SQLException throwable) {
             logger.error("sql exception ", throwable);

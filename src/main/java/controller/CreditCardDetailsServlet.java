@@ -13,7 +13,9 @@ import java.io.IOException;
 import java.util.List;
 import java.util.ResourceBundle;
 
-
+/**
+ * web servlet for page /account/credit-cards/*
+ */
 @WebServlet("/account/credit-cards/*")
 public class CreditCardDetailsServlet extends HttpServlet {
 
@@ -22,6 +24,13 @@ public class CreditCardDetailsServlet extends HttpServlet {
     private final CheckDataWithFormService verifiableData = CheckedDataWithFormImpl.getInstance();
     private final static String BLOCK = "block";
 
+    /**
+     * method show credit card by id
+     * @param request request
+     * @param response response
+     * @throws ServletException servlet exception
+     * @throws IOException IO exception
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         SessionObjectForUser sessionObject = (SessionObjectForUser)request.getSession().getAttribute("isActive");
@@ -31,6 +40,13 @@ public class CreditCardDetailsServlet extends HttpServlet {
         request.getRequestDispatcher("/WEB-INF/view/creditCardDetails.jsp").forward(request, response);
         }
 
+    /**
+     * method put block at credit card and replenish balance credit card
+     * @param request request
+     * @param response response
+     * @throws ServletException servlet exception
+     * @throws IOException IO exception
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         ResourceBundle lang = (ResourceBundle) request.getAttribute("lang");
@@ -45,7 +61,6 @@ public class CreditCardDetailsServlet extends HttpServlet {
         }else {
             creditCardService.putData(request.getParameterMap(),creditCardId);
         }
-
         doGet(request,response);
     }
 

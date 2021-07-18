@@ -4,6 +4,9 @@ import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
 import java.io.IOException;
 
+/**
+ * web filter to set encoding
+ */
 @WebFilter(value = "*")
 public class EncodingFilter implements Filter {
     @Override

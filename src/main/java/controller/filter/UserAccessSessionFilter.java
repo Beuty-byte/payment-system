@@ -9,7 +9,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-
+/**
+ * web filter to check access to user page
+ */
 @WebFilter(urlPatterns = {"/account/payments", "/account/payments/*","/account/credit-cards"
         ,"/account/credit-cards/*","/account"})
 public class UserAccessSessionFilter implements Filter {

@@ -12,7 +12,7 @@ class Configuration {
     public static String DB_PASSWORD;
     public static String DB_URL;
     public static String DB_DRIVER;
-    public static Integer DB_MAX_CONNECTION = 50;
+    public static Integer DB_MAX_CONNECTION;
 
     static {
         Properties props = new Properties();
@@ -23,6 +23,7 @@ class Configuration {
             DB_USER_NAME = props.getProperty("username");
             DB_PASSWORD = props.getProperty("password");
             DB_DRIVER = props.getProperty("dbDriver");
+            DB_MAX_CONNECTION = Integer.parseInt(props.getProperty("dbMaxConnection"));
         } catch (IOException e) {
             e.printStackTrace();
         }

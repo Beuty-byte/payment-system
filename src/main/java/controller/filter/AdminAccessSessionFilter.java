@@ -9,6 +9,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * web filter to check access to admin page
+ */
 @WebFilter(urlPatterns = {"/admin","/admin/users/*","/admin/users"})
 public class AdminAccessSessionFilter implements Filter {
     @Override

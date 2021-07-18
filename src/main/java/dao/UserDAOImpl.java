@@ -6,10 +6,8 @@ import domain.User;
 import org.apache.log4j.Logger;
 
 import java.sql.*;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 public class UserDAOImpl implements UserDAO{
@@ -29,6 +27,7 @@ public class UserDAOImpl implements UserDAO{
 
     private static final int SHOW_USERS_ON_PAGE = 5;
     private static final Logger logger = Logger.getLogger(UserDAOImpl.class);
+    private final CreditCardDAO creditCardDAO = CreditCardDAOImpl.getInstance();
 
     public static int getAmountUsersOnPage() {
         return SHOW_USERS_ON_PAGE;
@@ -75,7 +74,7 @@ public class UserDAOImpl implements UserDAO{
                 User user = new User.Builder().withId(id)
                                 .withName(name)
                                 .withSurname(surName)
-                                .withCreditCards(CreditCardDAOImpl.getInstance().getAllCreditCardsWithBankAccountForUser(id))
+                                .withCreditCards(creditCardDAO.getAllCreditCardsWithBankAccountForUser(id))
                                 .withEmail(email).build();
                 users.add(user);
             }
@@ -97,7 +96,7 @@ public class UserDAOImpl implements UserDAO{
             String name = resultSet.getObject("name", String.class);
             String surname = resultSet.getObject("surname", String.class);
             String email = resultSet.getObject("email", String.class);
-            List<CreditCard> creditCardList = CreditCardDAOImpl.getInstance().getAllCreditCardsWithBankAccountForUser(id);
+            List<CreditCard> creditCardList = creditCardDAO.getAllCreditCardsWithBankAccountForUser(id);
             user = new User.Builder()
                     .withName(name)
                     .withSurname(surname)
@@ -111,13 +110,13 @@ public class UserDAOImpl implements UserDAO{
         return Optional.ofNullable(user);
     }
 
-    public boolean registerUserInSystem(Map<String, String[]> customerData){
+    public boolean registerUserInSystem(String name, String surname, String password, String email){
         Connection connection = ConnectionData.getConnection();
         try (PreparedStatement statement = connection.prepareStatement(REGISTER_USER)){
-            statement.setString(1, customerData.get("name")[0]);
-            statement.setString(2, customerData.get("surname")[0]);
-            statement.setString(3, customerData.get("password1")[0]);
-            statement.setString(4, customerData.get("email")[0]);
+            statement.setString(1, name);
+            statement.setString(2, surname);
+            statement.setString(3, password);
+            statement.setString(4, email);
             return statement.execute();
         } catch (SQLException throwable) {
             logger.error("sql error ", throwable);

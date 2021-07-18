@@ -1,8 +1,7 @@
 package controller;
 
-import dao.PaymentDAOImpl;
+
 import domain.User;
-import org.apache.log4j.Logger;
 import service.*;
 
 import javax.servlet.ServletException;
@@ -12,6 +11,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * servlet for page /admin/user/*
+ */
 @WebServlet("/admin/users/*")
 public class AdminShowUsersDetailsServlet extends HttpServlet {
 
@@ -19,6 +21,13 @@ public class AdminShowUsersDetailsServlet extends HttpServlet {
     private final UrlHandler urlHandler = UrlHandlerImpl.getInstance();
     private final CreditCardService creditCardService = CreditCardServiceImpl.getInstance();
 
+    /**
+     * method for show user details
+     * @param request request
+     * @param response response
+     * @throws ServletException servlet exception
+     * @throws IOException IO exception
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
@@ -33,6 +42,13 @@ public class AdminShowUsersDetailsServlet extends HttpServlet {
 
     }
 
+    /**
+     * method for unblock credit card
+     * @param request request
+     * @param response response
+     * @throws ServletException servlet exception
+     * @throws IOException IO exception
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
        creditCardService.putData(request.getParameterMap(), 0L);

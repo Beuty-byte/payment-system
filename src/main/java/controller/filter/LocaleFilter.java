@@ -8,7 +8,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Locale;
 import java.util.ResourceBundle;
-
+/**
+ * web filter to set internationalization
+ */
 @WebFilter("*")
 public class LocaleFilter implements Filter {
     @Override

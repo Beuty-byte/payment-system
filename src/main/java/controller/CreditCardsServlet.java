@@ -13,11 +13,21 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * servlet for page /account/credit-cards
+ */
 @WebServlet("/account/credit-cards")
 public class CreditCardsServlet extends HttpServlet {
 
     private final CreditCardService creditCardInfo = CreditCardServiceImpl.getInstance();
 
+    /**
+     * method show all credit cards for user and total balance
+     * @param request request
+     * @param response response
+     * @throws ServletException servlet exception
+     * @throws IOException IO exception
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         SessionObjectForUser sessionObject = (SessionObjectForUser)request.getSession().getAttribute("isActive");

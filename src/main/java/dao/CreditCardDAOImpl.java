@@ -4,7 +4,8 @@ import dao.connectionpool.ConnectionData;
 import domain.BankAccount;
 import domain.CreditCard;
 import org.apache.log4j.Logger;
-import service.CreditCardServiceImpl;
+import util.CreditCardIdPrettyPrint;
+import util.CreditCardIdPrettyPrintImpl;
 
 
 import java.math.BigDecimal;
@@ -34,6 +35,7 @@ public class CreditCardDAOImpl implements CreditCardDAO{
             "WHERE users_id = ? AND id = ?";
 
     final static Logger logger = Logger.getLogger(CreditCardDAOImpl.class);
+    private final CreditCardIdPrettyPrint getIdForPrettyPrint = CreditCardIdPrettyPrintImpl.getInstance();
 
     private final static CreditCardDAOImpl creditCardDAO = new CreditCardDAOImpl();
     public static CreditCardDAOImpl getInstance(){
@@ -54,7 +56,7 @@ public class CreditCardDAOImpl implements CreditCardDAO{
                 int bankAccountId = resultSet.getObject("bank_account_id", Integer.class);
                 String creditCardName = resultSet.getObject("name",String.class);
                 creditCardList.add(new CreditCard(creditCardId,getBankAccount(bankAccountId)
-                        , creditCardName, CreditCardServiceImpl.getInstance().getIdForPrettyPrint(creditCardId)));
+                        , creditCardName, getIdForPrettyPrint.getIdForPrettyPrint(creditCardId)));
             }
         } catch (SQLException throwable) {
             logger.error("wrong format id", throwable);
@@ -93,7 +95,7 @@ public class CreditCardDAOImpl implements CreditCardDAO{
                 String creditCardName = resultSet.getObject("name", String.class);
 
                 creditCard = new CreditCard(creditCardId, getBankAccount(bankAccountId)
-                        , creditCardName, CreditCardServiceImpl.getInstance().getIdForPrettyPrint(id));
+                        , creditCardName, getIdForPrettyPrint.getIdForPrettyPrint(id));
             }
 
         } catch (SQLException throwable) {

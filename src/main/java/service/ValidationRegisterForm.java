@@ -2,6 +2,7 @@ package service;
 
 
 import dao.ValidationUniquenessEmailDAO;
+import dao.ValidationUniquenessEmailDAOImpl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +12,7 @@ import java.util.ResourceBundle;
 public class ValidationRegisterForm implements VerifiableData {
 
     private static final ValidationRegisterForm INSTANCE = new ValidationRegisterForm();
-    private final ValidationUniquenessEmailDAO validationUniquenessEmailDAO = ValidationUniquenessEmailDAO.getInstance();
+    private final ValidationUniquenessEmailDAO validationUniquenessEmailDAO = ValidationUniquenessEmailDAOImpl.getInstance();
 
     public static ValidationRegisterForm getInstance(){
         return INSTANCE;

@@ -4,6 +4,8 @@ package service;
 import dao.VerificationOfLoginDetailsDAO;
 import dao.VerificationOfLoginDetailsDAOImpl;
 import domain.SessionObjectForUser;
+import util.PasswordEncoder;
+import util.PasswordEncoderImpl;
 
 public class VerificationOfLoginDetailsService implements CheckedLoginDetails{
 
@@ -12,12 +14,13 @@ public class VerificationOfLoginDetailsService implements CheckedLoginDetails{
         return INSTANCE;
     }
     private final VerificationOfLoginDetailsDAO verification = VerificationOfLoginDetailsDAOImpl.getInstance();
+    private final PasswordEncoder passwordEncoder = PasswordEncoderImpl.getInstance();
 
     private VerificationOfLoginDetailsService(){}
 
     @Override
     public SessionObjectForUser loginDataValidation(String email, String password){
-        return verification.verificationEmailAndPassword(email, password)
+        return verification.verificationEmailAndPassword(email, passwordEncoder.getEncoderPassword(password))
         .orElseThrow(IllegalArgumentException::new);
     }
 }

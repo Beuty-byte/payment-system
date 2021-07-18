@@ -13,11 +13,21 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * servlet for page /admin/users
+ */
 @WebServlet("/admin/users")
 public class AdminShowUsersServlet extends HttpServlet {
 
     UserService usersService = UsersServiceImpl.getInstance();
 
+    /**
+     * method make forward at jsp page and show list with users
+     * @param request request
+     * @param response response
+     * @throws ServletException servlet exception
+     * @throws IOException IO exception
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 

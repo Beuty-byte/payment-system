@@ -8,6 +8,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * servlet for switch language on english
+ */
 @WebServlet("/en")
 public class LanguageSwitchToEnglishServlet extends HttpServlet {
     @Override
